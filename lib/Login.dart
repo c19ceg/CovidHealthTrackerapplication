@@ -120,10 +120,16 @@ class _HomeState extends State<Home> {
 
                 onPressed: ()async{
                   if(_formKey.currentState.validate()) {
-
+                     dynamic newUser;
                     //DB validation
-                     try{
-                     dynamic newUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
+                    try {
+                       newUser = await _auth.signInWithEmailAndPassword(
+                          email: email, password: password);
+                    }
+                    catch(e)
+                  {newUser=null;
+                  print(e);
+                  }
                      if (newUser != null) {
                       showDialog(
                       context: context,
@@ -131,7 +137,7 @@ class _HomeState extends State<Home> {
     // return object of type Dialog
                       return AlertDialog(
                       title: new Text("Message"),
-                      content: new Text("Loged in as \n$email"),
+                      content: new Text("Loged in as \n$email",),
                        actions: <Widget>[
     // usually buttons at the bottom of the dialog
                         new FlatButton(
@@ -146,32 +152,22 @@ class _HomeState extends State<Home> {
                     );
                   }
                   else {
-                       SizedBox(height: 12.0);
-                       Text("user doesn't exist",
-                         style: TextStyle(color: Colors.red, fontSize: 14.0),);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        // return object of type Dialog
+                        return AlertDialog(
+                          title: new Text("Message"),
+                          content: new Text("sorry \n$email donot exist"),
+                          actions: <Widget>[
+                            // usually buttons at the bottom of the dialog
+                            new FlatButton(
+                              child: new Text("Ok"),
+                              onPressed: () {
+                                Navigator.of(context).pop();},),
+                          ],);},);
                      }}
-                     catch(e)
-                  {
-                   String error = e.toString();
-                   print(error);
-                   Text(error);
-                   AlertDialog(
-                     title: new Text("Message"),
-                     content: new Text(error),
-                     actions: <Widget>[
-                       // usually buttons at the bottom of the dialog
-                       new FlatButton(
-                         child: new Text("Ok"),
-                         onPressed: () {
-                           Navigator.of(context).pop();},),
-                     ],);
-                  }
-
-                  }
-
-
                   },
-
               ),
             )
           ],
@@ -181,12 +177,5 @@ class _HomeState extends State<Home> {
   }
 }
 
-/*class error extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return
-    Text("user doesn't exist",
-      style: TextStyle(color: Colors.red, fontSize: 14.0),);
-  }
-}*/
+
 
