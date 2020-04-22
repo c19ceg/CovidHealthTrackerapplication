@@ -1,7 +1,9 @@
 //import 'package:covid/Dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend1db/auth.dart';
 import 'Info.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 
@@ -43,8 +45,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // final _auth = FirebaseAuth.instance;
-  String name;
+  final _auth = FirebaseAuth.instance;
+  //final AuthService _auth = AuthService();
+  String email;
   String password;
   final _formKey = GlobalKey<FormState>();
   @override
@@ -60,7 +63,7 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.all(20.0),
               child: TextFormField(
                 onChanged: (val) {
-                  name = val;
+                  email = val;
                 },
                 decoration: const InputDecoration(
                     icon: Icon(Icons.person, color: Colors.black, size: 40.0),
@@ -68,11 +71,11 @@ class _HomeState extends State<Home> {
                     hintStyle: TextStyle(color: Colors.white),
                     labelText: 'Enter Username/EmailId:',
                     labelStyle: TextStyle(color: Colors.white)),
-                validator:(name){
+                validator:(email){
                   Pattern pattern =
-                      r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
+                  r'^([a-z0-9_\-\.]+)@([a-z.]+)\.([a-z]{2,5})$';
                   RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(name))
+                  if (!regex.hasMatch(email))
                     return 'Invalid username';
                   else
                     return null;
@@ -110,21 +113,66 @@ class _HomeState extends State<Home> {
             Container(
               padding: EdgeInsets.only(left: 20.0,top: 50.0),
               child: RaisedButton(
-                onPressed: (){
+                  child: Text('login', style: TextStyle(fontSize: 20.0,),),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),),
+
+
+                onPressed: ()async{
                   if(_formKey.currentState.validate()) {
-                    Scaffold.of(context)
-                        .showSnackBar(SnackBar(content: Text('Data is in processing.')));
-                    Navigator.push(
+
+                    //DB validation
+                     try{
+                     dynamic newUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
+                     if (newUser != null) {
+                      showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+    // return object of type Dialog
+                      return AlertDialog(
+                      title: new Text("Message"),
+                      content: new Text("Loged in as \n$email"),
+                       actions: <Widget>[
+    // usually buttons at the bottom of the dialog
+                        new FlatButton(
+                       child: new Text("Ok"),
+                       onPressed: () {
+                        Navigator.of(context).pop();},),
+    ],);},);
+
+                       Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => Info()),
                     );
-                  }},
+                  }
+                  else {
+                       SizedBox(height: 12.0);
+                       Text("user doesn't exist",
+                         style: TextStyle(color: Colors.red, fontSize: 14.0),);
+                     }}
+                     catch(e)
+                  {
+                   String error = e.toString();
+                   print(error);
+                   Text(error);
+                   AlertDialog(
+                     title: new Text("Message"),
+                     content: new Text(error),
+                     actions: <Widget>[
+                       // usually buttons at the bottom of the dialog
+                       new FlatButton(
+                         child: new Text("Ok"),
+                         onPressed: () {
+                           Navigator.of(context).pop();},),
+                     ],);
+                  }
 
-                child: Text('login',
-                  style: TextStyle(
-                    fontSize: 20.0,),),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),),),
+                  }
+
+
+                  },
+
+              ),
             )
           ],
         ),
@@ -132,3 +180,13 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
+/*class error extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return
+    Text("user doesn't exist",
+      style: TextStyle(color: Colors.red, fontSize: 14.0),);
+  }
+}*/
+
