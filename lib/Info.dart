@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'Questions.dart';
@@ -50,21 +50,32 @@ class Formdetails extends StatefulWidget {
 }
 
 class _FormdetailsState extends State<Formdetails> {
-  //final _fs = Firestore.instance;
-  //FirebaseUser fbuser;
-  //String userName;
+  final _fs = Firestore.instance;
+  FirebaseUser fbuser;
+  String userName;
 
-  /*@override
+  @override
   void initState() {
     super.initState();
     getUser();
-  }*/
+  }
 
+  void getUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        fbuser = user;
+        userName = fbuser.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
 
   final _formKey = GlobalKey<FormState>();
 
-  //final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   String name;
   String phoneNo;
   String age;
@@ -183,6 +194,13 @@ class _FormdetailsState extends State<Formdetails> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Questions()));
                   }
+                  _fs.collection('info').add({
+                    'email': userName,
+                    'name': name,
+                    'phone': phoneNo,
+                    'age': age,
+                    'occupation': occupation,
+                  });
                 },
                 child: Text(
                   'submit',

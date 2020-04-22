@@ -1,10 +1,10 @@
-import 'dart:io';
+//import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+//import 'package:rflutter_alert/rflutter_alert.dart';
 import 'Login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'auth.dart';
+//import 'auth.dart';
 
 class Signup extends StatelessWidget {
   @override
@@ -102,7 +102,7 @@ class _HomeState extends State<Home> {
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(password){
                   Pattern pattern =
-                      r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
+                      r'^[ A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$';
                   RegExp regex = new RegExp(pattern);
                   if (!regex.hasMatch(password)   )
                     {
@@ -119,10 +119,16 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.only(left: 20.0, top: 50.0),
               child: RaisedButton(
                 onPressed: () async {
+                  dynamic newUser;
                   if(_formKey.currentState.validate()) {
                     try {
-                      final newUser = await _auth.createUserWithEmailAndPassword(
-                          email: email, password: password);
+                      newUser = await _auth.createUserWithEmailAndPassword(
+                          email: email, password: password);}
+                    catch (e) {
+                      newUser=null;
+                      print(e);
+
+                    }
 
                       if (newUser != null) {
                          showDialog(
@@ -145,12 +151,22 @@ class _HomeState extends State<Home> {
                       }
                       else
                         {
-                          Scaffold.of(context)
-                              .showSnackBar(SnackBar(content: Text('Invalid data')));
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              // return object of type Dialog
+                              return AlertDialog(
+                                title: new Text("Message"),
+                                content: new Text("Invalid Credential/password should be greater than 6 character"),
+                                actions: <Widget>[
+                                  // usually buttons at the bottom of the dialog
+                                  new FlatButton(
+                                    child: new Text("Ok"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();},),
+                                ],);},);
                         }
-                    } catch (e) {
-                      print(e);
-                    }
+
                   }
                 },
                 child: Text('Sign In',style: TextStyle(fontSize: 20.0,),),

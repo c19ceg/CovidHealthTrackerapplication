@@ -1,8 +1,9 @@
 //import 'package:covid/Dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 //import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Questions extends StatelessWidget {
@@ -50,13 +51,17 @@ class Formdetails extends StatefulWidget {
 }
 
 class _FormdetailsState extends State<Formdetails> {
-  //final _fs = Firestore.instance;
-  // FirebaseUser fbuser;
+  final _fs = Firestore.instance;
+  FirebaseUser fbuser;
   String userName;
   bool checkvalue=false;
 
+
+
+
+
   @override
-/*  void initState() {
+  void initState() {
     super.initState();
     getUser();
   }
@@ -71,19 +76,18 @@ class _FormdetailsState extends State<Formdetails> {
     } catch (e) {
       print(e);
     }
-  }*/
+  }
 
   final _formKey = GlobalKey<FormState>();
 
-  /*final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
 
   List<String> question = ['Qn1', 'Qn2', 'Qn3', 'Qn4', 'Qn5'];
   String ans1, ans2, ans3, ans4;
   String qn1 = 'Travelled out in past 30days?';
   String qn2 = 'Willing to volunteer when needed?';
   String qn3 = 'Do you have any health issues?';
-  String qn4 =
-      'Did you come interact or in contact with someone who has tested positive for COVID-19?';*/
+  String qn4 = 'Willing to take 20 seconds selftesting?';
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +100,9 @@ class _FormdetailsState extends State<Formdetails> {
             Container(
               padding: EdgeInsets.all(10.0),
               child: TextFormField(
-                // onChanged: (val) {
-                // ans1 = val;
-                //},
+                onChanged: (val) {
+                  ans1 = val;
+                },
                 decoration: const InputDecoration(
                     hintText: 'Travel History',
                     hintStyle: TextStyle(color: Colors.white),
@@ -119,9 +123,9 @@ class _FormdetailsState extends State<Formdetails> {
             Container(
               padding: EdgeInsets.all(10.0),
               child: TextFormField(
-                // onChanged: (val) {
-                // ans2 = val;
-                //},
+                onChanged: (val) {
+                  ans2 = val;
+                },
                 decoration: const InputDecoration(
                     hintText: 'yes/no:',
                     hintStyle: TextStyle(color: Colors.white),
@@ -139,9 +143,9 @@ class _FormdetailsState extends State<Formdetails> {
             Container(
               padding: EdgeInsets.all(10.0),
               child: TextFormField(
-                //  onChanged: (val) {
-                //  ans3 = val;
-                //},
+                onChanged: (val) {
+                  ans3 = val;
+                },
                 decoration: const InputDecoration(
                     hintText: 'Personal Health:',
                     hintStyle: TextStyle(color: Colors.white),
@@ -159,35 +163,13 @@ class _FormdetailsState extends State<Formdetails> {
                 },
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              child: TextFormField(
-                //onChanged: (val) {
-                // ans4 = val;
-                // },
-                decoration: const InputDecoration(
-                    hintText: 'in celcius',
-                    hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Enter your body temperature:',
-                    labelStyle: TextStyle(color: Colors.white)),
-                validator:(ans4){
-                  Pattern pattern =
-                      r'^[ 0-9]+(?:[0-9]+)*$';
-                  RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(ans4))
-                    return 'Invalid temperature';
-                  else
-                    return null;
 
-                },
-              ),
-            ),
             Container(
               padding: EdgeInsets.all(10.0),
               child: TextFormField(
-                //onChanged: (val) {
-                // ans4 = val;
-                // },
+                onChanged: (val) {
+                  ans4 = val;
+                },
                 decoration: const InputDecoration(
                     hintText: 'yes/no:',
                     hintStyle: TextStyle(color: Colors.white),
@@ -218,6 +200,19 @@ class _FormdetailsState extends State<Formdetails> {
                 )
             ),
 
+
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child:Row(
+                children: <Widget>[
+                   temp(),
+                ],
+              )
+
+
+            ),
+
+
             Container(
               padding: EdgeInsets.only(left: 140.0, top: 80.0),
               child: RaisedButton(
@@ -234,8 +229,16 @@ class _FormdetailsState extends State<Formdetails> {
                           SnackBar(content: Text('CONFIRM your action.')));
                     }
                     //Navigator.push(context,
-                    //MaterialPageRoute(builder: (context) => Dashboard()));
+                    // MaterialPageRoute(builder: (context) => Dashboard()));
                   }
+
+                  _fs.collection('info').add({
+                    'email': userName,
+                    qn1: ans1,
+                    qn2: ans2,
+                    qn3: ans3,
+                    qn4: ans4
+                  });
 
                 },
                 child: Text(
@@ -256,4 +259,36 @@ class _FormdetailsState extends State<Formdetails> {
   }
 }
 
+class temp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    double min=97.0;
+    //double max=105.0;
+    String info;
+    Random rnd = new Random();
+    double temp = min+ rnd.nextDouble();
+    String t = temp.toString();
+    final startindex = t.indexOf('9');
+    final finalindex = t.indexOf('.');
+    String temperature = t.substring(startindex,finalindex+2);
+    if(temp>98.0)
+      info = "\nyou have fever,\nplease visit nearby health center.";
+    else
+      info = "\nyou dont have fever.";
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(30.0,0.0,10.0,10.0),
+     margin: EdgeInsets.all(20.0),
+     child: Row(
+       children: <Widget>[
+         Text("your body temperature: $temperature \n$info",style: TextStyle(color: Colors.red,fontSize: 20.0),),
+       //  Text(,style: TextStyle(color: Colors.red,fontSize: 12.0),),
+
+       ],
+
+     ),
+
+    );
+  }
+}
 

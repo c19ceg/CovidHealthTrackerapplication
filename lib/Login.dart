@@ -1,6 +1,6 @@
 //import 'package:covid/Dashboard.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend1db/auth.dart';
+//import 'package:frontend1db/auth.dart';
 import 'Info.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -99,11 +99,11 @@ class _HomeState extends State<Home> {
                     hintStyle: TextStyle(color: Colors.white),
                     labelText: 'Enter Your Password:',
                     labelStyle: TextStyle(color: Colors.white)),
-                validator:(pas){
+                validator:(password){
                   Pattern pattern =
-                      r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
+                      r'^[ A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$';
                   RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(pas) && pas.length<6 )
+                  if (!regex.hasMatch(password) )
                     return 'Invalid password/\npassword is less than 6 character';
                   else
                     return null;
