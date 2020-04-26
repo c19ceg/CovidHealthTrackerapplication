@@ -3,18 +3,18 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 //import 'package:rflutter_alert/rflutter_alert.dart';
 
-class Questions extends StatelessWidget {
+class QuestionsT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey[700],
       appBar: AppBar(
-        title: Text("Self Assessment"),
+        title: Text("சுயமதிப்பீடு"),
         centerTitle: true,
         backgroundColor: Colors.blue[900],
       ),
@@ -53,8 +53,8 @@ class Formdetails extends StatefulWidget {
 }
 
 class _FormdetailsState extends State<Formdetails> {
-  final _fs = Firestore.instance;
-  FirebaseUser fbuser;
+  /*final _fs = Firestore.instance;
+  FirebaseUser fbuser;*/
   String userName;
   double value;
   bool checkvalue=false;
@@ -63,7 +63,7 @@ class _FormdetailsState extends State<Formdetails> {
 
 
 
-  @override
+  /*@override
   void initState() {
     super.initState();
     getUser();
@@ -79,18 +79,18 @@ class _FormdetailsState extends State<Formdetails> {
     } catch (e) {
       print(e);
     }
-  }
+  }*/
 
   final _formKey = GlobalKey<FormState>();
 
-  final _auth = FirebaseAuth.instance;
+  //final _auth = FirebaseAuth.instance;
 
-  List<String> question = ['Qn1', 'Qn2', 'Qn3', 'Qn4', 'Qn5'];
+  //List<String> question = ['Qn1', 'Qn2', 'Qn3', 'Qn4', 'Qn5'];
   String ans1, ans2, ans3, ans4;
-  String qn1 = 'Travelled out in past 30days?';
-  String qn2 = 'Willing to volunteer when needed?';
-  String qn3 = 'Do you have any health issues?';
-  String qn4 = 'Willing to take 20 seconds selftesting?';
+  //String qn1 = 'Travelled out in past 30days?';
+  //String qn2 = 'Willing to volunteer when needed?';
+  //String qn3 = 'Do you have any health issues?';
+  //String qn4 = 'Willing to take 20 seconds selftesting?';
 
   @override
   Widget build(BuildContext context) {
@@ -107,16 +107,14 @@ class _FormdetailsState extends State<Formdetails> {
                   ans1 = val;
                 },
                 decoration: const InputDecoration(
-                    hintText: 'Travel History',
+                    hintText: 'பயண வரலாறு',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Travelled out in past 30days?',
+                    labelText: 'கடந்த 30 நாட்களில் பயணம் செய்தீர்களா?',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(ans1){
-                  Pattern pattern =
-                      r'^[ A-Za-z]+(?:[ _-][A-Za-z ]+)*$';
-                  RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(ans1))
-                    return 'Invalid answer';
+
+                  if (ans1.isEmpty)
+                    return 'தவறான பதில்';
                   else
                     return null;
 
@@ -132,11 +130,12 @@ class _FormdetailsState extends State<Formdetails> {
                 decoration: const InputDecoration(
                     hintText: 'yes/no',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Willing to help needy when needed?',
+                    labelText: 'தேவைப்படும்போது உதவுகிறீர்களா?',
                     labelStyle: TextStyle(color: Colors.white)),
+
                 validator:(ans2){
                   if (ans2!="yes" && ans2!="no")
-                    return 'Invalid answer TYPE:yes/no';
+                    return 'தவறான பதில் வகை:yes/no';
                   else
                     return null;
 
@@ -150,16 +149,14 @@ class _FormdetailsState extends State<Formdetails> {
                   ans3 = val;
                 },
                 decoration: const InputDecoration(
-                    hintText: 'Personal Health',
+                    hintText: 'தனிப்பட்ட ஆரோக்கியம்',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'How is your health?',
+                    labelText: 'உங்கள் உடல்நலம் எப்படி உள்ளது?',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(ans3){
-                  Pattern pattern =
-                      r'^[ A-Z a-z]+(?:[ _-][A-Z a-z ]+)*$';
-                  RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(ans3))
-                    return 'Invalid answer';
+
+                  if (ans3.isEmpty)
+                    return 'தவறான பதில்';
                   else
                     return null;
 
@@ -176,11 +173,11 @@ class _FormdetailsState extends State<Formdetails> {
                 decoration: const InputDecoration(
                     hintText: 'yes/no',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Willing to take 20 seconds selftesting??',
+                    labelText: '20 நொடி சோதனைக்கு தயாரா?',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(ans2){
                   if (ans2!="yes" && ans2!="no")
-                    return 'Invalid answer TYPE:yes/no';
+                    return 'தவறான பதில் வகை:yes/no';
                   else
                     return null;
 
@@ -197,55 +194,57 @@ class _FormdetailsState extends State<Formdetails> {
                         checkvalue=value;
                       });
                     }),
-                    Text("I here by CONFIRM the above\n"
-                        "information is true.",style: TextStyle(color: Colors.black,fontSize: 18.0,fontWeight:FontWeight.bold,),overflow: TextOverflow.ellipsis,),
+                    SizedBox(height: 30.0,),
+                    Text("மேலே உள்ள தகவலை\n"
+                        " இதன்மூலம் உறுதிப்படுத்துகிறேன்"
+                        ,style: TextStyle(color: Colors.black,fontSize: 13.0,fontWeight:FontWeight.bold,),overflow: TextOverflow.ellipsis,),
                   ],
                 )
             ),
 
 
             Container(
-              padding: EdgeInsets.all(10.0),
-              child:Row(
-                children: <Widget>[
-                     temp(),
-                ],
-              )
+                padding: EdgeInsets.all(10.0),
+                child:Row(
+                  children: <Widget>[
+                    temp(),
+                  ],
+                )
 
 
             ),
 
 
             Container(
-              padding: EdgeInsets.only(left: 140.0, top: 80.0),
+              padding: EdgeInsets.only(left: 100.0, top: 50.0),
               child: RaisedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
                     if (checkvalue == true) {
                       Scaffold.of(context)
                           .showSnackBar(
-                          SnackBar(content: Text('Data is in processing.')));
+                          SnackBar(content: Text('தரவு செயலாக்கத்தில் உள்ளது.')));
                     }
                     else {
                       Scaffold.of(context)
                           .showSnackBar(
-                          SnackBar(content: Text('CONFIRM your action.')));
+                          SnackBar(content: Text('உங்கள் செயலை உறுதிப்படுத்தவும்.')));
                     }
                     //Navigator.push(context,
                     // MaterialPageRoute(builder: (context) => Dashboard()));
                   }
 
-                  _fs.collection('info').add({
+                 /* _fs.collection('info').add({
                     'email': userName,
                     qn1: ans1,
                     qn2: ans2,
                     qn3: ans3,
                     qn4: ans4
-                  });
+                  });*/
 
                 },
                 child: Text(
-                  'proceed',
+                  'தொடரவும்',
                   style: TextStyle(
                     fontSize: 20.0,
                   ),
@@ -275,21 +274,21 @@ class temp extends StatelessWidget {
     final finalindex = t.indexOf('.');
     String temperature = t.substring(startindex,finalindex+2);
     if(temp>98.0)
-      info = "\nyou have fever,\nplease visit nearby health center.";
+      info = "\nஉங்களுக்கு காய்ச்சல் உள்ளது,\nதயவுசெய்து அருகிலுள்ள\nசுகாதார மையத்திற்குச்\nசெல்லுங்கள்.";
     else
-      info = "\nyou dont have fever.";
+      info = "\nஉங்களுக்கு காய்ச்சல் இல்லை..";
 
     return Container(
-      padding: EdgeInsets.fromLTRB(30.0,0.0,10.0,10.0),
-     margin: EdgeInsets.all(20.0),
-     child: Row(
-       children: <Widget>[
-         Text("your body temperature: $temperature \n$info",style: TextStyle(color: Colors.red,fontSize: 20.0),),
-       //  Text(,style: TextStyle(color: Colors.red,fontSize: 12.0),),
+      padding: EdgeInsets.fromLTRB(5.0,0.0,10.0,10.0),
+      margin: EdgeInsets.all(20.0),
+      child: Row(
+        children: <Widget>[
+          Text("உங்கள் உடல் வெப்பநிலை: $temperature \n$info",style: TextStyle(color: Colors.red,fontSize: 17.0),),
+          //  Text(,style: TextStyle(color: Colors.red,fontSize: 12.0),),
 
-       ],
+        ],
 
-     ),
+      ),
     );
   }
 

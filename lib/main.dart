@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'Login.dart';
 import 'Signup.dart';
-
+import 'mainT.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -102,8 +102,30 @@ class _buttonState extends State<button> {
                   context, MaterialPageRoute(builder: (context) => Login()));
             },
           ),
-        ],
-      ),
-    );
+
+          Container(
+
+            child: Column(
+              children: <Widget>[
+                SizedBox(width: 0.0,height: 20.0,),
+                Text("பயன்பாட்டு மொழியை மாற்ற:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
+
+                    RaisedButton(
+                      child: Text("தமிழ்",style: TextStyle(fontSize: 20.0,),),
+
+                      onPressed: (){
+                        this.setState((){
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (context) => MyAppT()));
+                        });
+                      },
+                    ),
+                  ],
+                ),
+
+            ),
+           ],
+          ),
+      );
   }
 }

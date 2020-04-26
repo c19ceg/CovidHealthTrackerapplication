@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:rflutter_alert/rflutter_alert.dart';
 
-import 'Questions.dart';
+import 'QuestionsT.dart';
 
-class Info extends StatelessWidget {
+class InfoT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Registration form"),
+        title: Text("பதிவு படிவம்"),
         centerTitle: true,
         backgroundColor: Colors.blue[900],
       ),
@@ -50,17 +50,17 @@ class Formdetails extends StatefulWidget {
 }
 
 class _FormdetailsState extends State<Formdetails> {
-  final _fs = Firestore.instance;
-  FirebaseUser fbuser;
+  //final _fs = Firestore.instance;
+ // FirebaseUser fbuser;
   String userName;
 
-  @override
+  /* @override
   void initState() {
     super.initState();
     getUser();
   }
 
-  void getUser() async {
+ void getUser() async {
     try {
       final user = await _auth.currentUser();
       if (user != null) {
@@ -70,12 +70,12 @@ class _FormdetailsState extends State<Formdetails> {
     } catch (e) {
       print(e);
     }
-  }
+  }*/
 
 
   final _formKey = GlobalKey<FormState>();
 
-  final _auth = FirebaseAuth.instance;
+  //final _auth = FirebaseAuth.instance;
   String name;
   String phoneNo;
   String age;
@@ -97,16 +97,13 @@ class _FormdetailsState extends State<Formdetails> {
                 },
                 decoration: const InputDecoration(
                     icon: Icon(Icons.person, color: Colors.black, size: 30.0),
-                    hintText: 'Enter your name',
+                    hintText: 'உங்கள் பெயரை உள்ளிடவும்',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Name',
+                    labelText: 'பெயர்',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(name){
-                  Pattern pattern =
-                      r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
-                  RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(name))
-                    return 'Invalid username';
+                  if (name.isEmpty)
+                    return 'தவறான பெயர்';
                   else
                     return null;
 
@@ -121,16 +118,16 @@ class _FormdetailsState extends State<Formdetails> {
                 },
                 decoration: const InputDecoration(
                     icon: Icon(Icons.phone, color: Colors.black, size: 30.0),
-                    hintText: 'Enter your phoneno',
+                    hintText: 'உங்கள் தொலைபேசி எண்',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Phone',
+                    labelText: 'தொலைபேசி எண்',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(phoneNO){
                   Pattern pattern =
                       r'^[ 0-9]+(?:[ _-][0-9]+)*$';
                   RegExp regex = new RegExp(pattern);
                   if (!regex.hasMatch(phoneNO))
-                    return 'Invalid phonenumber';
+                    return 'தவறான தொலைபேசி எண்';
                   else
                     return null;
 
@@ -145,16 +142,16 @@ class _FormdetailsState extends State<Formdetails> {
                 },
                 decoration: const InputDecoration(
                     icon: Icon(Icons.ac_unit, color: Colors.black, size: 30.0),
-                    hintText: 'Enter your age',
+                    hintText: 'உங்கள் வயதை உள்ளிடவும்',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Age',
+                    labelText: 'வயது',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(age){
                   Pattern pattern =
                       r'^[ 0-9]+(?:[0-9]+)*$';
                   RegExp regex = new RegExp(pattern);
                   if (!regex.hasMatch(age))
-                    return 'Invalid age';
+                    return 'தவறான வயது';
                   else
                     return null;
 
@@ -170,16 +167,13 @@ class _FormdetailsState extends State<Formdetails> {
                 decoration: const InputDecoration(
                     icon: Icon(Icons.work, color: Colors.black, size: 30.0,
                     ),
-                    hintText: 'Occupation',
+                    hintText: 'உங்கள் தொழில்',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Profession',
+                    labelText: 'தொழில்',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(occupation){
-                  Pattern pattern =
-                      r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
-                  RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(occupation))
-                    return 'Invalid Occupation';
+                  if (occupation.isEmpty)
+                    return 'தவறான தொழில்';
                   else
                     return null;
 
@@ -187,23 +181,23 @@ class _FormdetailsState extends State<Formdetails> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 150.0, top: 40.0),
+              padding: EdgeInsets.only(left: 100.0, top: 40.0),
               child: RaisedButton(
                 onPressed: () {
                   if(_formKey.currentState.validate()) {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Questions()));
+                        MaterialPageRoute(builder: (context) => QuestionsT()));
                   }
-                  _fs.collection('info').add({
+                  /*_fs.collection('info').add({
                     'email': userName,
                     'name': name,
                     'phone': phoneNo,
                     'age': age,
                     'occupation': occupation,
-                  });
+                  });*/
                 },
                 child: Text(
-                  'submit',
+                  'சமர்ப்பிக்கவும்',
                   style: TextStyle(
                     fontSize: 20.0,
                   ),

@@ -1,12 +1,13 @@
 //import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:frontend1db/LoginT.dart';
 //import 'package:rflutter_alert/rflutter_alert.dart';
-import 'Login.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'LoginT.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 //import 'auth.dart';
 
-class Signup extends StatelessWidget {
+class SignupT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,7 +22,7 @@ class FullScreenPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'SIGN UP',
+          'பதிவுசெய்க',
         ),
         backgroundColor: Colors.blue[900],
         centerTitle: true,
@@ -44,7 +45,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _auth = FirebaseAuth.instance;
+  //final _auth = FirebaseAuth.instance;
   String email;
   String password;
   String error;
@@ -66,16 +67,16 @@ class _HomeState extends State<Home> {
                 },
                 decoration: const InputDecoration(
                     icon: Icon(Icons.alternate_email, color: Colors.black, size: 40.0),
-                    hintText: 'EmailId',
+                    hintText: 'அஞ்சல் ஐடி',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Enter your mail id',
+                    labelText: 'உங்கள் அஞ்சல் ஐடி',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(email){
                   Pattern pattern =
                       r'^([a-z0-9_\-\.]+)@([a-z.]+)\.([a-z]{2,5})$';
                   RegExp regex = new RegExp(pattern);
                   if (!regex.hasMatch(email))
-                    return 'Invalid username';
+                    return 'தவறான அஞ்சல் ஐடி';
                   else
                     return null;
 
@@ -96,20 +97,13 @@ class _HomeState extends State<Home> {
                       color: Colors.black,
                       size: 40.0,
                     ),
-                    hintText: 'Password',
+                    hintText: 'கடவுச்சொல்',
                     hintStyle: TextStyle(color: Colors.white),
-                    labelText: 'Enter Your Password',
+                    labelText: 'கடவுச்சொல்லை உள்ளிடவும்',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(password){
-                  Pattern pattern =
-                      r'^[ A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$';
-                  RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(password)   )
-                    {
-                     // if(password.length<6)
-                        return 'Invalid password/\npassword is less than 6 character';
-
-                  }
+                  if (password.length<6)
+                    return 'தவறான கடவுச்சொல் \n ​​கடவுச்சொல் 6 எழுத்துகளுக்கு\nகுறைவாக உள்ளது';
                   else
                     return null;
                 },
@@ -118,9 +112,10 @@ class _HomeState extends State<Home> {
             Container(
               padding: EdgeInsets.only(left: 20.0, top: 50.0),
               child: RaisedButton(
-                onPressed: () async {
-                  dynamic newUser;
+                onPressed: ()  {
                   if(_formKey.currentState.validate()) {
+                    /*dynamic newUser;
+                  }
                     try {
                       newUser = await _auth.createUserWithEmailAndPassword(
                           email: email, password: password);}
@@ -130,56 +125,56 @@ class _HomeState extends State<Home> {
 
                     }
 
-                      if (newUser != null) {
-                         showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-    // return object of type Dialog
-                              return AlertDialog(
-                                 title: new Text("Message"),
-                                 content: new Text("Successfully Registered"),
-                                 actions: <Widget>[
-    // usually buttons at the bottom of the dialog
-                                  new FlatButton(
-                                 child: new Text("Ok"),
-                                  onPressed: () {
-                                   Navigator.of(context).pop();},),
-                                 ],);},);
+                    if (newUser != null) {*/
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          // return object of type Dialog
+                          return AlertDialog(
+                          title: new Text("செய்தி"),
+                            content: new Text("வெற்றிகரமாக பதிவு செய்யப்பட்டது"),
+                            actions: <Widget>[
+                              // usually buttons at the bottom of the dialog
+                              new FlatButton(
+                                child: new Text("சரி"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();},),
+                            ],);},);
 
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
-                      }
-                      else
-                        {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              // return object of type Dialog
-                              return AlertDialog(
-                                title: new Text("Message"),
-                                content: new Text("Invalid Credential/password should be greater than 6 character"),
-                                actions: <Widget>[
-                                  // usually buttons at the bottom of the dialog
-                                  new FlatButton(
-                                    child: new Text("Ok"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();},),
-                                ],);},);
-                        }
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginT()));
+
+                  /*  else
+                    {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          // return object of type Dialog
+                          return AlertDialog(
+                            title: new Text("செய்தி"),
+                            content: new Text("தவறான தரவு\n கடவுச்சொல் 6 எழுத்துகளுக்கு மேல் இருக்க வேண்டும்"),
+                            actions: <Widget>[
+                              // usually buttons at the bottom of the dialog
+                              new FlatButton(
+                                child: new Text("சரி"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();},),
+                            ],);},);
+                    }*/
 
                   }
                 },
-                child: Text('Sign In',style: TextStyle(fontSize: 20.0,),),
-                  shape: RoundedRectangleBorder(
+                child: Text('உள்நுழைக',style: TextStyle(fontSize: 20.0,),),
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
             ),
 
 
-                //  SizedBox(height: 12.0,),
-                //  Text(error,
-                 //     style: TextStyle(color: Colors.red, fontSize: 14.0))
+            //  SizedBox(height: 12.0,),
+            //  Text(error,
+            //     style: TextStyle(color: Colors.red, fontSize: 14.0))
 
           ],
         ),
