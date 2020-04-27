@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'InfoT.dart';
 
 
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 
@@ -46,10 +46,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
- // final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   //final AuthService _auth = AuthService();
   String email;
   String password;
+  String info;
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -112,64 +113,108 @@ class _HomeState extends State<Home> {
             Container(
               padding: EdgeInsets.only(left: 20.0,top: 50.0),
               child: RaisedButton(
-                child: Text('உள்நுழைய', style: TextStyle(fontSize: 20.0,),),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),),
+                  child: Text('உள்நுழைய', style: TextStyle(fontSize: 20.0,),),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),),
 
 
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    /*dynamic newUser;
-                    //DB validation
-                    try {
-                      newUser = await _auth.signInWithEmailAndPassword(
-                          email: email, password: password);
-                    }
-                    catch(e)
-                    {newUser=null;
-                    print(e);
-                    }
-                    if (newUser != null) {*/
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // return object of type Dialog
-                        return AlertDialog(
-                          title: new Text("செய்தி"),
-                          content: new Text("உள்நுழைந்துள்ளீர் \n$email",),
-                          actions: <Widget>[
-                            // usually buttons at the bottom of the dialog
-                            new FlatButton(
-                              child: new Text("சரி"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },),
-                          ],);
-                      },);
+                  onPressed: ()async{
+                    if(_formKey.currentState.validate()) {
+                      dynamic newUser;
+                      //DB validation
+                      try {
+                        newUser = await _auth.signInWithEmailAndPassword(
+                            email: email, password: password);
+                      }
+                      catch(e)
+                      {
+                        print(e);
+                        newUser=null;
+                        String i=e.toString();
+                        final startindex = i.indexOf('(');
+                        final finalindex = i.indexOf(',');
+                        info = i.substring(startindex,finalindex);
+                      }
+                      if (newUser != null) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("செய்தி"),
+                              content: new Text("உள்நுழைந்துள்ளீர் \n$email",),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                new FlatButton(
+                                  child: new Text("சரி"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },),
+                              ],);
+                          },);
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => InfoT()),
-                    );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => InfoT()),
+                        );
+                      }
+
+                      else if(info == "(ERROR_NETWORK_REQUEST_FAILED")
+                      {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("செய்தி"),
+                              content: new Text("மோசமான இணைய இணைப்பு"),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                new FlatButton(
+                                  child: new Text("சரி"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();},),
+                              ],);},);
+
+                      }
+
+                      else if(info == "(ERROR_WRONG_PASSWORD")
+                      {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("செய்தி"),
+                              content: new Text("தவறான கடவுச்சொல்"),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                new FlatButton(
+                                  child: new Text("சரி"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();},),
+                              ],);},);
+
+                      }
+
+
+                  else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("செய்தி"),
+                              content: new Text("மன்னிக்கவும் \n$email இல்லை"),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                new FlatButton(
+                                  child: new Text("சரி"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();},),
+                              ],);},);
+                      }}
                   }
-
-                  /*   else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          // return object of type Dialog
-                          return AlertDialog(
-                            title: new Text("செய்தி"),
-                            content: new Text("மன்னிக்கவும் \n$email இல்லை"),
-                            actions: <Widget>[
-                              // usually buttons at the bottom of the dialog
-                              new FlatButton(
-                                child: new Text("சரி"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();},),
-                            ],);},);
-                    }*/
-                }
               ),
             ),
           ],

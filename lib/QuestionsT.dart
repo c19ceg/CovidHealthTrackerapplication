@@ -3,10 +3,10 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:math';
-//import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'dart:math';
+import 'DashboardT.dart';
 
 class QuestionsT extends StatelessWidget {
   @override
@@ -53,8 +53,8 @@ class Formdetails extends StatefulWidget {
 }
 
 class _FormdetailsState extends State<Formdetails> {
-  /*final _fs = Firestore.instance;
-  FirebaseUser fbuser;*/
+  final _fs = Firestore.instance;
+  FirebaseUser fbuser;
   String userName;
   double value;
   bool checkvalue=false;
@@ -63,7 +63,7 @@ class _FormdetailsState extends State<Formdetails> {
 
 
 
-  /*@override
+  @override
   void initState() {
     super.initState();
     getUser();
@@ -79,18 +79,18 @@ class _FormdetailsState extends State<Formdetails> {
     } catch (e) {
       print(e);
     }
-  }*/
+  }
 
   final _formKey = GlobalKey<FormState>();
 
-  //final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
 
-  //List<String> question = ['Qn1', 'Qn2', 'Qn3', 'Qn4', 'Qn5'];
+  List<String> question = ['Qn1', 'Qn2', 'Qn3', 'Qn4', 'Qn5'];
   String ans1, ans2, ans3, ans4;
-  //String qn1 = 'Travelled out in past 30days?';
-  //String qn2 = 'Willing to volunteer when needed?';
-  //String qn3 = 'Do you have any health issues?';
-  //String qn4 = 'Willing to take 20 seconds selftesting?';
+  String qn1 = 'Travelled out in past 30days?';
+  String qn2 = 'Willing to volunteer when needed?';
+  String qn3 = 'Do you have any health issues?';
+  String qn4 = 'Willing to take 20 seconds selftesting?';
 
   @override
   Widget build(BuildContext context) {
@@ -197,22 +197,11 @@ class _FormdetailsState extends State<Formdetails> {
                     SizedBox(height: 30.0,),
                     Text("மேலே உள்ள தகவலை\n"
                         " இதன்மூலம் உறுதிப்படுத்துகிறேன்"
-                        ,style: TextStyle(color: Colors.black,fontSize: 13.0,fontWeight:FontWeight.bold,),overflow: TextOverflow.ellipsis,),
+                      ,style: TextStyle(color: Colors.black,fontSize: 13.0,fontWeight:FontWeight.bold,),overflow: TextOverflow.ellipsis,),
                   ],
                 )
             ),
 
-
-            Container(
-                padding: EdgeInsets.all(10.0),
-                child:Row(
-                  children: <Widget>[
-                    temp(),
-                  ],
-                )
-
-
-            ),
 
 
             Container(
@@ -224,23 +213,24 @@ class _FormdetailsState extends State<Formdetails> {
                       Scaffold.of(context)
                           .showSnackBar(
                           SnackBar(content: Text('தரவு செயலாக்கத்தில் உள்ளது.')));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => DashboardT()));
                     }
                     else {
                       Scaffold.of(context)
                           .showSnackBar(
                           SnackBar(content: Text('உங்கள் செயலை உறுதிப்படுத்தவும்.')));
                     }
-                    //Navigator.push(context,
-                    // MaterialPageRoute(builder: (context) => Dashboard()));
+
                   }
 
-                 /* _fs.collection('info').add({
+                  _fs.collection('info').add({
                     'email': userName,
                     qn1: ans1,
                     qn2: ans2,
                     qn3: ans3,
                     qn4: ans4
-                  });*/
+                  });
 
                 },
                 child: Text(
@@ -259,38 +249,5 @@ class _FormdetailsState extends State<Formdetails> {
       ),
     );
   }
-}
-
-class temp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    double min=97.0;
-    //double max=105.0;
-    String info;
-    Random rnd = new Random();
-    double temp = min+ rnd.nextDouble();
-    String t = temp.toString();
-    final startindex = t.indexOf('9');
-    final finalindex = t.indexOf('.');
-    String temperature = t.substring(startindex,finalindex+2);
-    if(temp>98.0)
-      info = "\nஉங்களுக்கு காய்ச்சல் உள்ளது,\nதயவுசெய்து அருகிலுள்ள\nசுகாதார மையத்திற்குச்\nசெல்லுங்கள்.";
-    else
-      info = "\nஉங்களுக்கு காய்ச்சல் இல்லை..";
-
-    return Container(
-      padding: EdgeInsets.fromLTRB(5.0,0.0,10.0,10.0),
-      margin: EdgeInsets.all(20.0),
-      child: Row(
-        children: <Widget>[
-          Text("உங்கள் உடல் வெப்பநிலை: $temperature \n$info",style: TextStyle(color: Colors.red,fontSize: 17.0),),
-          //  Text(,style: TextStyle(color: Colors.red,fontSize: 12.0),),
-
-        ],
-
-      ),
-    );
-  }
-
 }
 

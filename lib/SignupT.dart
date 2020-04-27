@@ -1,10 +1,11 @@
 //import 'dart:io';
 
 import 'package:flutter/material.dart';
+//import 'package:flutter/services.dart';
 import 'package:frontend1db/LoginT.dart';
 //import 'package:rflutter_alert/rflutter_alert.dart';
 import 'LoginT.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //import 'auth.dart';
 
 class SignupT extends StatelessWidget {
@@ -45,10 +46,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  //final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   String email;
   String password;
   String error;
+  String info;
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -112,39 +114,81 @@ class _HomeState extends State<Home> {
             Container(
               padding: EdgeInsets.only(left: 20.0, top: 50.0),
               child: RaisedButton(
-                onPressed: ()  {
+                onPressed: () async {
+                  dynamic newUser;
                   if(_formKey.currentState.validate()) {
-                    /*dynamic newUser;
-                  }
                     try {
                       newUser = await _auth.createUserWithEmailAndPassword(
                           email: email, password: password);}
                     catch (e) {
-                      newUser=null;
                       print(e);
+                      newUser=null;
+                      String i=e.toString();
+                      final startindex = i.indexOf('(');
+                      final finalindex = i.indexOf(',');
+                       info = i.substring(startindex,finalindex);
 
-                    }
-
-                    if (newUser != null) {*/
-                      showDialog(
+                    /*  showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           // return object of type Dialog
                           return AlertDialog(
-                          title: new Text("செய்தி"),
-                            content: new Text("வெற்றிகரமாக பதிவு செய்யப்பட்டது"),
+                            title: new Text("செய்தி"),
+                            content: new Text("மோசமான இணைய இணைப்பு"),
                             actions: <Widget>[
                               // usually buttons at the bottom of the dialog
                               new FlatButton(
                                 child: new Text("சரி"),
                                 onPressed: () {
                                   Navigator.of(context).pop();},),
-                            ],);},);
+                            ],);},);*/
+
+                    }
+
+                    if (newUser != null) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          // return object of type Dialog
+                          return AlertDialog(
+                            title: new Text("செய்தி"),
+                            content: new Text(
+                                "வெற்றிகரமாக பதிவு செய்யப்பட்டது"),
+                            actions: <Widget>[
+                              // usually buttons at the bottom of the dialog
+                              new FlatButton(
+                                child: new Text("சரி"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },),
+                            ],);
+                        },);
 
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => LoginT()));
+                    }
 
-                  /*  else
+
+                    else if(info == "(ERROR_NETWORK_REQUEST_FAILED")
+                        {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              // return object of type Dialog
+                              return AlertDialog(
+                                title: new Text("செய்தி"),
+                                content: new Text("மோசமான இணைய இணைப்பு"),
+                                actions: <Widget>[
+                                  // usually buttons at the bottom of the dialog
+                                  new FlatButton(
+                                    child: new Text("சரி"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();},),
+                                ],);},);
+
+                        }
+
+                    else if(info == "(ERROR_EMAIL_ALREADY_IN_USE")
                     {
                       showDialog(
                         context: context,
@@ -152,7 +196,7 @@ class _HomeState extends State<Home> {
                           // return object of type Dialog
                           return AlertDialog(
                             title: new Text("செய்தி"),
-                            content: new Text("தவறான தரவு\n கடவுச்சொல் 6 எழுத்துகளுக்கு மேல் இருக்க வேண்டும்"),
+                            content: new Text("மின்னஞ்சல் \nஏற்கனவே உபயோகத்தில் உள்ளது"),
                             actions: <Widget>[
                               // usually buttons at the bottom of the dialog
                               new FlatButton(
@@ -160,7 +204,27 @@ class _HomeState extends State<Home> {
                                 onPressed: () {
                                   Navigator.of(context).pop();},),
                             ],);},);
-                    }*/
+
+                    }
+
+
+                    else
+                    {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          // return object of type Dialog
+                          return AlertDialog(
+                            title: new Text("செய்தி"),
+                            content: new Text("தவறான தரவு\n /கடவுச்சொல் 6 எழுத்துகளுக்கு மேல் இருக்க வேண்டும்"),
+                            actions: <Widget>[
+                              // usually buttons at the bottom of the dialog
+                              new FlatButton(
+                                child: new Text("சரி"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();},),
+                            ],);},);
+                    }
 
                   }
                 },

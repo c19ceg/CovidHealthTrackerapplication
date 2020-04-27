@@ -6,7 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'Questions.dart';
 
+
 class Info extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,20 +17,25 @@ class Info extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.blue[900],
       ),
-      body:  SingleChildScrollView(
+      body: SingleChildScrollView(
+
         child: Container(
 
           child: Stack(
             children: <Widget>[
               background(),
               Formdetails(),
+
             ],
           ),
         ),
       ),
     );
+
   }
+
 }
+
 
 class background extends StatelessWidget {
   @override
@@ -61,11 +68,13 @@ class _FormdetailsState extends State<Formdetails> {
   }
 
   void getUser() async {
+
     try {
       final user = await _auth.currentUser();
       if (user != null) {
         fbuser = user;
         userName = fbuser.email;
+
       }
     } catch (e) {
       print(e);

@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:math';
-//import 'package:rflutter_alert/rflutter_alert.dart';
+//import 'dart:math';
+import 'Dashboard.dart';
 
 class Questions extends StatelessWidget {
   @override
@@ -205,18 +205,6 @@ class _FormdetailsState extends State<Formdetails> {
 
 
             Container(
-              padding: EdgeInsets.all(10.0),
-              child:Row(
-                children: <Widget>[
-                     temp(),
-                ],
-              )
-
-
-            ),
-
-
-            Container(
               padding: EdgeInsets.only(left: 140.0, top: 80.0),
               child: RaisedButton(
                 onPressed: () {
@@ -225,14 +213,15 @@ class _FormdetailsState extends State<Formdetails> {
                       Scaffold.of(context)
                           .showSnackBar(
                           SnackBar(content: Text('Data is in processing.')));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Dashboard()));
                     }
                     else {
                       Scaffold.of(context)
                           .showSnackBar(
                           SnackBar(content: Text('CONFIRM your action.')));
                     }
-                    //Navigator.push(context,
-                    // MaterialPageRoute(builder: (context) => Dashboard()));
+
                   }
 
                   _fs.collection('info').add({
@@ -260,38 +249,5 @@ class _FormdetailsState extends State<Formdetails> {
       ),
     );
   }
-}
-
-class temp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    double min=97.0;
-    //double max=105.0;
-    String info;
-    Random rnd = new Random();
-    double temp = min+ rnd.nextDouble();
-    String t = temp.toString();
-    final startindex = t.indexOf('9');
-    final finalindex = t.indexOf('.');
-    String temperature = t.substring(startindex,finalindex+2);
-    if(temp>98.0)
-      info = "\nyou have fever,\nplease visit nearby health center.";
-    else
-      info = "\nyou dont have fever.";
-
-    return Container(
-      padding: EdgeInsets.fromLTRB(30.0,0.0,10.0,10.0),
-     margin: EdgeInsets.all(20.0),
-     child: Row(
-       children: <Widget>[
-         Text("your body temperature: $temperature \n$info",style: TextStyle(color: Colors.red,fontSize: 20.0),),
-       //  Text(,style: TextStyle(color: Colors.red,fontSize: 12.0),),
-
-       ],
-
-     ),
-    );
-  }
-
 }
 

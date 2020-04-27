@@ -48,7 +48,10 @@ class _HomeState extends State<Home> {
   String email;
   String password;
   String error;
+  String info;
   final _formKey = GlobalKey<FormState>();
+
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -61,6 +64,7 @@ class _HomeState extends State<Home> {
             Container(
               padding: EdgeInsets.all(20.0),
               child: TextFormField(
+
                 onChanged: (val) {
                   email = val;
                 },
@@ -125,8 +129,12 @@ class _HomeState extends State<Home> {
                       newUser = await _auth.createUserWithEmailAndPassword(
                           email: email, password: password);}
                     catch (e) {
-                      newUser=null;
                       print(e);
+                      newUser=null;
+                      String i=e.toString();
+                      final startindex = i.indexOf('(');
+                      final finalindex = i.indexOf(',');
+                      info = i.substring(startindex,finalindex);
 
                     }
 
@@ -149,6 +157,46 @@ class _HomeState extends State<Home> {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Login()));
                       }
+
+                      else if(info == "(ERROR_NETWORK_REQUEST_FAILED")
+                      {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("Message"),
+                              content: new Text("Poor Network Connection"),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                new FlatButton(
+                                  child: new Text("ok"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();},),
+                              ],);},);
+
+                      }
+
+                      else if(info == "(ERROR_EMAIL_ALREADY_IN_USE")
+                      {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("Message"),
+                              content: new Text("Email Already in Use"),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                new FlatButton(
+                                  child: new Text("ok"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();},),
+                              ],);},);
+
+                      }
+
+
                       else
                         {
                           showDialog(

@@ -49,7 +49,9 @@ class _HomeState extends State<Home> {
   //final AuthService _auth = AuthService();
   String email;
   String password;
+  String info;
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -62,6 +64,7 @@ class _HomeState extends State<Home> {
             Container(
               padding: EdgeInsets.all(20.0),
               child: TextFormField(
+
                 onChanged: (val) {
                   email = val;
                 },
@@ -127,8 +130,13 @@ class _HomeState extends State<Home> {
                           email: email, password: password);
                     }
                     catch(e)
-                  {newUser=null;
-                  print(e);
+                  {
+                    print(e);
+                    newUser=null;
+                    String i=e.toString();
+                    final startindex = i.indexOf('(');
+                    final finalindex = i.indexOf(',');
+                    info = i.substring(startindex,finalindex);
                   }
                      if (newUser != null) {
                       showDialog(
@@ -151,6 +159,45 @@ class _HomeState extends State<Home> {
                       MaterialPageRoute(builder: (context) => Info()),
                     );
                   }
+
+                     else if(info == "(ERROR_NETWORK_REQUEST_FAILED")
+                     {
+                       showDialog(
+                         context: context,
+                         builder: (BuildContext context) {
+                           // return object of type Dialog
+                           return AlertDialog(
+                             title: new Text("Message"),
+                             content: new Text("Poor Network Connection"),
+                             actions: <Widget>[
+                               // usually buttons at the bottom of the dialog
+                               new FlatButton(
+                                 child: new Text("ok"),
+                                 onPressed: () {
+                                   Navigator.of(context).pop();},),
+                             ],);},);
+
+                     }
+
+                     else if(info == "(ERROR_WRONG_PASSWORD")
+                     {
+                       showDialog(
+                         context: context,
+                         builder: (BuildContext context) {
+                           // return object of type Dialog
+                           return AlertDialog(
+                             title: new Text("Messsage"),
+                             content: new Text("Invalid Password"),
+                             actions: <Widget>[
+                               // usually buttons at the bottom of the dialog
+                               new FlatButton(
+                                 child: new Text("ok"),
+                                 onPressed: () {
+                                   Navigator.of(context).pop();},),
+                             ],);},);
+
+                     }
+
                   else {
                     showDialog(
                       context: context,
