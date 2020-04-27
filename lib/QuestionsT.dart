@@ -128,14 +128,14 @@ class _FormdetailsState extends State<Formdetails> {
                   ans2 = val;
                 },
                 decoration: const InputDecoration(
-                    hintText: 'yes/no',
+                    hintText: 'ஆம்/இல்லை',
                     hintStyle: TextStyle(color: Colors.white),
                     labelText: 'தேவைப்படும்போது உதவுகிறீர்களா?',
                     labelStyle: TextStyle(color: Colors.white)),
 
                 validator:(ans2){
-                  if (ans2!="yes" && ans2!="no")
-                    return 'தவறான பதில் வகை:yes/no';
+                  if (ans2!="ஆம்" && ans2!="இல்லை")
+                    return 'தவறான பதில் வகை:ஆம்/இல்லை';
                   else
                     return null;
 
@@ -171,13 +171,13 @@ class _FormdetailsState extends State<Formdetails> {
                   ans4 = val;
                 },
                 decoration: const InputDecoration(
-                    hintText: 'yes/no',
+                    hintText: 'ஆம்/இல்லை',
                     hintStyle: TextStyle(color: Colors.white),
                     labelText: '20 நொடி சோதனைக்கு தயாரா?',
                     labelStyle: TextStyle(color: Colors.white)),
                 validator:(ans2){
-                  if (ans2!="yes" && ans2!="no")
-                    return 'தவறான பதில் வகை:yes/no';
+                  if (ans2!="ஆம்" && ans2!="இல்லை")
+                    return 'தவறான பதில் வகை:ஆம்/இல்லை';
                   else
                     return null;
 

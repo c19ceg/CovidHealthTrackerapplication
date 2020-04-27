@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
+import 'package:frontend1db/LoginT.dart';
+
 
 
 class DashboardT extends StatelessWidget {
@@ -17,6 +19,13 @@ class DashboardT extends StatelessWidget {
         title: Text("Dashboard"),
         centerTitle: true,
         backgroundColor: Colors.blue[900],
+       actions: <Widget>[
+         IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: (){
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginT()));
+         }
+         )
+       ],
+       // icon: Icons.keyboard_arrow_right,
       ),
 
       body: SingleChildScrollView(
@@ -49,10 +58,11 @@ class Background extends StatelessWidget {
 
 
 class Details extends StatelessWidget {
-  @override
 
+  @override
   Widget build(BuildContext context) {
     //calculate
+
 
     double min = 97.0;
     //double max=105.0;
@@ -85,8 +95,13 @@ class Details extends StatelessWidget {
                 color: Colors.red,
                 iconSize: 200.0,
               ),
+              SizedBox(height: 40.0,),
               Container(
-                  padding: EdgeInsets.fromLTRB(25.0, 0.0, 0.0, 0.0),
+                  decoration:  BoxDecoration(
+                    border: Border.all(width: 1.0,color: Colors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
                   child: Text(
                     "\nஉங்கள் உடல் வெப்பநிலை: $temperature \nஉங்கள் இருமல் இன்று $cough முறை \nஉங்கள் தும்மல் இன்று $sneeze முறை \n$info",
                     style: TextStyle(color: Colors.red[900], fontSize: 18.0),)),
@@ -112,13 +127,19 @@ class Details extends StatelessWidget {
                   icon: Icon(Icons.person),
                   color: Colors.yellowAccent,
                   iconSize: 200.0,
-                ),
+                ),SizedBox(height: 40.0,),
                 Container(
-                    padding: EdgeInsets.fromLTRB(25.0, 0.0, 0.0, 0.0),
+
+                    padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
+                  decoration:  BoxDecoration(
+                    border: Border.all(width: 1.0,color: Colors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
                     child: Text(
                       "\nஉங்கள் உடல் வெப்பநிலை: $temperature \nஉங்கள் இருமல் இன்று $cough முறை \nஉங்கள் தும்மல் இன்று $sneeze முறை \n$info",
                       style: TextStyle(
-                          color: Colors.yellow[700], fontSize: 18.0),)),
+                          color: Colors.yellow[700], fontSize: 18.0),),
+                    ),
 
               ],
             ),),
@@ -130,6 +151,7 @@ class Details extends StatelessWidget {
         info =
         "\nஉங்களுக்கு காய்ச்சல் இல்லை & உங்கள் இருமல் மற்றும் தும்மல் பாதுகாப்பான எல்லைக்குள் உள்ளது.";
       return Container(
+
         child: Center(
           child: Column(
             children: <Widget>[
@@ -140,9 +162,13 @@ class Details extends StatelessWidget {
                 icon: Icon(Icons.person),
                 color: Colors.green,
                 iconSize: 200.0,
-              ),
+              ),SizedBox(height: 40.0,),
               Container(
-                  padding: EdgeInsets.fromLTRB(25.0, 0.0, 0.0, 0.0),
+                  padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
+                  decoration:  BoxDecoration(
+                    border: Border.all(width: 1.0,color: Colors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
                   child: Text(
                     "\nஉங்கள் உடல் வெப்பநிலை: $temperature \nஉங்கள் இருமல் இன்று $cough முறை \nஉங்கள் தும்மல் இன்று $sneeze முறை \n$info",
                     style: TextStyle(
@@ -155,3 +181,4 @@ class Details extends StatelessWidget {
   }
   }
 }
+

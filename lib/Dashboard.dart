@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'Login.dart';
 
 
 
@@ -17,6 +18,12 @@ class Dashboard extends StatelessWidget {
         title: Text("Dashboard"),
         centerTitle: true,
         backgroundColor: Colors.blue[900],
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()));
+          }
+          )
+        ],
       ),
 
       body: SingleChildScrollView(
@@ -83,9 +90,13 @@ class Details extends StatelessWidget {
               icon: Icon(Icons.person),
               color: Colors.red,
               iconSize: 200.0,
-            ),
+            ), SizedBox(height: 40.0,),
             Container(
-                padding: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
+                decoration:  BoxDecoration(
+                  border: Border.all(width: 1.0,color: Colors.black),
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+                padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
                 child: Text("\nyour body temperature: $temperature \nyour coughed $cough times today \nyou sneezed $sneeze times today \n$info",style: TextStyle(color: Colors.red[900],fontSize: 20.0),)),
             //  Text(,style: TextStyle(color: Colors.red,fontSize: 12.0),),
 
@@ -111,9 +122,13 @@ class Details extends StatelessWidget {
                     icon: Icon(Icons.person),
                     color: Colors.yellowAccent,
                     iconSize: 200.0,
-                  ),
+                  ), SizedBox(height: 40.0,),
                   Container(
-                      padding: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
+                      decoration:  BoxDecoration(
+                        border: Border.all(width: 1.0,color: Colors.black),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
                       child: Text(
                         "\nyour body temperature: $temperature \nyour coughed $cough times today \nyou sneezed $sneeze times today \n$info",
                         style: TextStyle(
@@ -137,9 +152,13 @@ class Details extends StatelessWidget {
                     icon: Icon(Icons.person),
                     color: Colors.green,
                     iconSize: 200.0,
-                  ),
+                  ), SizedBox(height: 40.0,),
                   Container(
-                      padding: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
+                      decoration:  BoxDecoration(
+                        border: Border.all(width: 1.0,color: Colors.black),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
                       child: Text(
                         "\nyour body temperature: $temperature \nyour coughed $cough times today \nyou sneezed $sneeze times today \n$info",
                         style: TextStyle(

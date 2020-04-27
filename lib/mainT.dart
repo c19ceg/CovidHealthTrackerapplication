@@ -10,12 +10,12 @@ class MyAppT extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FirstPage(),
+      home: FirstPageT(),
     );
   }
 }
 
-class FirstPage extends StatelessWidget {
+class FirstPageT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -115,7 +115,7 @@ class _buttonState extends State<button> {
                   onPressed: (){
                     this.setState((){
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => MyApp()));
+                          context, MaterialPageRoute(builder: (context) => FirstPage()));
                     });
                   },
                 ),
