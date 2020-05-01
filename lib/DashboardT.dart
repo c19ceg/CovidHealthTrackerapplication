@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +18,7 @@ class DashboardT extends StatelessWidget {
       appBar: AppBar(
         title: Text("Dashboard"),
         centerTitle: true,
-        backgroundColor: Colors.blue[900],
+        backgroundColor: Colors.black,
        actions: <Widget>[
          IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: (){
            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginT()));
@@ -28,31 +28,18 @@ class DashboardT extends StatelessWidget {
        // icon: Icons.keyboard_arrow_right,
       ),
 
-      body: SingleChildScrollView(
-        child: Stack(
+      body: Stack(
           children: <Widget>[
-            Background(),
+          //  Container(padding:EdgeInsets.only(top:200.0,left: 60.0),child: SvgPicture.asset('assets/bg7.svg',height: 200.0,)),
             Details(),
           ],
-        ),
+
       ),
     );
   }
 }
 
-class Background extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Image.asset('assets/background1.jpg',),
-        ],
-      ),
-    );
-  }
 
-}
 
 
 
@@ -87,20 +74,27 @@ class Details extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
-              IconButton(
+              Container(padding:EdgeInsets.only(top:20.0,left: 10.0),child: SvgPicture.asset('assets/bgr7.svg',height: 200.0,)),
+              /*IconButton(
                 onPressed: () {
                   Details();
                 },
                 icon: Icon(Icons.person),
                 color: Colors.red,
                 iconSize: 200.0,
-              ),
+              ),*/
               SizedBox(height: 40.0,),
               Container(
-                  decoration:  BoxDecoration(
-                    border: Border.all(width: 1.0,color: Colors.black),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      border: Border.all(width: 1.0,color: Colors.black),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40.0),
+                        //bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(40.0),
+                      )
                   ),
+
                   padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
                   child: Text(
                     "\nஉங்கள் உடல் வெப்பநிலை: $temperature \nஉங்கள் இருமல் இன்று $cough முறை \nஉங்கள் தும்மல் இன்று $sneeze முறை \n$info",
@@ -112,7 +106,7 @@ class Details extends StatelessWidget {
           ),),
       );
     }
-    else {
+   else {
       if (temp > 98.0)
         {
         info ="\nஉங்களுக்கு காய்ச்சல் உள்ளது உங்கள் இருமல் மற்றும் தும்மல் பாதுகாப்பான எல்லைக்குள் உள்ளது, உங்கள் ஆரோக்கியத்தை கவனித்துக் கொள்ளுங்கள்.";
@@ -120,25 +114,31 @@ class Details extends StatelessWidget {
           child: Center(
             child: Column(
               children: <Widget>[
-                IconButton(
+                Container(padding:EdgeInsets.only(top:20.0,left: 10.0),child: SvgPicture.asset('assets/bgy7.svg',height: 200.0,)),
+               /* IconButton(
                   onPressed: () {
                     Details();
                   },
                   icon: Icon(Icons.person),
                   color: Colors.yellowAccent,
                   iconSize: 200.0,
-                ),SizedBox(height: 40.0,),
+                ),*/SizedBox(height: 40.0,),
                 Container(
 
                     padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
                   decoration:  BoxDecoration(
-                    border: Border.all(width: 1.0,color: Colors.black),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.white.withOpacity(0.7),
+                      border: Border.all(width: 1.0,color: Colors.black),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40.0),
+                        //bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(40.0),
+                      )
                   ),
                     child: Text(
                       "\nஉங்கள் உடல் வெப்பநிலை: $temperature \nஉங்கள் இருமல் இன்று $cough முறை \nஉங்கள் தும்மல் இன்று $sneeze முறை \n$info",
                       style: TextStyle(
-                          color: Colors.yellow[700], fontSize: 18.0),),
+                          color: Colors.yellow[900], fontSize: 18.0),),
                     ),
 
               ],
@@ -155,19 +155,25 @@ class Details extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
-              IconButton(
+              Container(padding:EdgeInsets.only(top:20.0,left: 10.0),child: SvgPicture.asset('assets/bgg7.svg',height: 200.0,)),
+             /* IconButton(
                 onPressed: () {
                   Details();
                 },
                 icon: Icon(Icons.person),
                 color: Colors.green,
                 iconSize: 200.0,
-              ),SizedBox(height: 40.0,),
+              ),*/SizedBox(height: 40.0,),
               Container(
                   padding: EdgeInsets.fromLTRB(25.0, 10.0, 0.0, 35.0),
                   decoration:  BoxDecoration(
-                    border: Border.all(width: 1.0,color: Colors.black),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.white.withOpacity(0.7),
+                      border: Border.all(width: 1.0,color: Colors.black),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40.0),
+                        //bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(40.0),
+                      )
                   ),
                   child: Text(
                     "\nஉங்கள் உடல் வெப்பநிலை: $temperature \nஉங்கள் இருமல் இன்று $cough முறை \nஉங்கள் தும்மல் இன்று $sneeze முறை \n$info",

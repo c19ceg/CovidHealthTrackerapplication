@@ -1,8 +1,10 @@
 //import 'package:covid/login.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'LoginT.dart';
 import 'SignupT.dart';
 import 'main.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 void mainT() => runApp(MyAppT());
 
 class MyAppT extends StatelessWidget {
@@ -27,15 +29,17 @@ class FirstPageT extends StatelessWidget {
               style: TextStyle(fontSize: 20.0),
             ),
             centerTitle: true,
-            backgroundColor: Colors.blue[900],
+            backgroundColor: Colors.black,
           ),
           body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/background1.jpg'),
-                  fit: BoxFit.cover),
-            ),
-            child: button(),
+            padding: EdgeInsets.only(top: 10.0),
+            child: Stack(
+              children: <Widget>[
+
+              //  Container(padding:EdgeInsets.only(top:10.0,left: 10.0),child: SvgPicture.asset('assets/home.svg',height: 200.0,)),
+                button(),
+              ],
+            ),color: Colors.blueGrey[700],
           ),
         ),
       ),
