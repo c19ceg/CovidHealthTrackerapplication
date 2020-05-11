@@ -1,12 +1,13 @@
 //import 'package:covid/login.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
-import 'package:flutter_svg/flutter_svg.dart';
+//import 'dart:ffi';
+//import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'globals.dart'as globales;
 import 'Login.dart';
 import 'Signup.dart';
@@ -19,11 +20,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home:// Column(
-        //children: <Widget>[
-          Splashscreen(),
-         // FirstPage(),
-       // ],
-     // ),
+      //children: <Widget>[
+      Splashscreen(),
+      // FirstPage(),
+      // ],
+      // ),
     );
   }
 }
@@ -43,47 +44,47 @@ class _SplashscreenState extends State<Splashscreen> {
     super.initState();
     _getCurrentLocation();
     Future.delayed(Duration(seconds: 5),(){print("hi");
-      Navigator.push(
+    Navigator.push(
         context, MaterialPageRoute(
         builder: (context) => FirstPage()
-      )
-      );
-     },
+    )
     );
-    }
+    },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'TRACK-O-METER',
-            style: TextStyle(fontSize: 20.0),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(
+          'Covid Health Tracker',
+          style: TextStyle(fontSize: 20.0),
         ),
+        centerTitle: true,
+        backgroundColor: Colors.black,
+      ),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-      color: Colors.black,
-           ),
+              color: Colors.black,
+            ),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               SizedBox(height: 100.0,),
               Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundImage: AssetImage('assets/giphy.gif'),
-                        radius: 200.0,
-                      )
-                    ] ,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircleAvatar(
+                      backgroundImage: AssetImage('assets/giphy.gif'),
+                      radius: 200.0,
+                    )
+                  ] ,
                 ),
               ),
 
@@ -109,8 +110,8 @@ class _SplashscreenState extends State<Splashscreen> {
   }
 
   _getCurrentLocation(){
-    double lat;
-    double long;
+    // double lat;
+    //double long;
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
     try{
       geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position){
@@ -154,13 +155,13 @@ class _FirstPageState extends State<FirstPage> {
           ),
           body: Container(color: Colors.blueGrey[700],
             child: Stack(
-                children: <Widget>[
+              children: <Widget>[
                 button(),
 
-            ],),
+              ],),
+          ),
         ),
-      ),
-    ),);
+      ),);
   }
 }
 
@@ -171,7 +172,7 @@ class button extends StatefulWidget {
 }
 
 class _buttonState extends State<button> {
-  Future<Album> _futureAlbum;
+  //Future<Album> _futureAlbum;
   //Position _currentPosition;
 
   @override
@@ -183,9 +184,9 @@ class _buttonState extends State<button> {
           Text(
             'WELCOME,User\n',
             style: TextStyle(
-              fontSize: 40.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[100],
+                fontSize: 40.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue[100]
             ),
           ),
           Text('New user?', style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
@@ -228,54 +229,74 @@ class _buttonState extends State<button> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             onPressed: () {
-              createAlbum(globales.currentPosition.latitude,globales.currentPosition.longitude);
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Login()));
-             // print("dissss:${globales.distance}");
-
-
-              try {
-                double data = globales.distance;
-                double data_meter = data * 1000;
-                print("meterdistance:$data_meter");
-                String i=data_meter.toString();
-                if (data_meter < 1.0) {
-                  final startindex = i.indexOf('0');
-                  final finalindex = i.indexOf('.');
-                  String info = i.substring(startindex,finalindex+2);
-                  print("info:$info");
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      // return object of type Dialog
-                      return AlertDialog(
-                        title: new Text("INFO"),
-                        content: Text(
-                            "distance$info,\nMove Away from your place imediately",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.red,)),
-                        actions: <Widget>[
-                          // usually buttons at the bottom of the dialog
-                          new FlatButton(
-                            child: new Text("சரி"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },),
-                        ],);
-                    },);
+              try{
+                createAlbum(globales.currentPosition.latitude,globales.currentPosition.longitude);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+                // print("dissss:${globales.distance}");
+                try {
+                  double data = globales.distance;
+                  double data_meter = data * 1000;
+                  print("meterdistance:$data_meter");
+                  String i=data_meter.toString();
+                  if (data_meter < 1.0) {
+                    final startindex = i.indexOf('0');
+                    final finalindex = i.indexOf('.');
+                    String info = i.substring(startindex,finalindex+2);
+                    print("info:$info");
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        // return object of type Dialog
+                        return AlertDialog(
+                          title: new Text("INFO"),
+                          content: Text(
+                              "distance$info,\nMove Away from your place imediately",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold, color: Colors.red,)),
+                          actions: <Widget>[
+                            // usually buttons at the bottom of the dialog
+                            new FlatButton(
+                              child: new Text("சரி"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },),
+                          ],);
+                      },);
+                  }
+                  else {
+                    final startindex = i.indexOf('1');
+                    final finalindex = i.indexOf('.');
+                    String info = i.substring(startindex,finalindex+2);
+                    print("info:$info");
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        // return object of type Dialog
+                        return AlertDialog(
+                          title: new Text("INFO"),
+                          content: Text("distance:$info,", style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.green,)),
+                          actions: <Widget>[
+                            // usually buttons at the bottom of the dialog
+                            new FlatButton(
+                              child: new Text("சரி"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },),
+                          ],);
+                      },);
+                  }
                 }
-                else {
-                  final startindex = i.indexOf('1');
-                  final finalindex = i.indexOf('.');
-                  String info = i.substring(startindex,finalindex+2);
-                  print("info:$info");
+                catch(e){
+                  globales.distance =2.0;
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       // return object of type Dialog
                       return AlertDialog(
                         title: new Text("INFO"),
-                        content: Text("distance:$info,", style: TextStyle(
+                        content: Text("BE SAFE,", style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.green,)),
                         actions: <Widget>[
                           // usually buttons at the bottom of the dialog
@@ -295,8 +316,8 @@ class _buttonState extends State<button> {
                     // return object of type Dialog
                     return AlertDialog(
                       title: new Text("INFO"),
-                      content: Text("BE SAFE,", style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.green,)),
+                      content: Text("ON YOUE DEVICE LOCATION TO AND RESTART THE APP TO PROCEED.", style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black,)),
                       actions: <Widget>[
                         // usually buttons at the bottom of the dialog
                         new FlatButton(
@@ -307,7 +328,6 @@ class _buttonState extends State<button> {
                       ],);
                   },);
               }
-
             },
           ),
 
@@ -318,23 +338,23 @@ class _buttonState extends State<button> {
                 SizedBox(width: 0.0,height: 20.0,),
                 Text("பயன்பாட்டு மொழியை மாற்ற:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
 
-                    RaisedButton(
-                      child: Text("தமிழ்",style: TextStyle(fontSize: 20.0,),),
+                RaisedButton(
+                  child: Text("தமிழ்",style: TextStyle(fontSize: 20.0,),),
 
-                      onPressed: (){
-                        this.setState((){
-                          Navigator.push(
-                              context, MaterialPageRoute(builder: (context) => MyAppT()));
-                        });
-                      },
-                    ),
-                  ],
+                  onPressed: (){
+                    this.setState((){
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MyAppT()));
+                    });
+                  },
                 ),
-
+              ],
             ),
-           ],
+
           ),
-      );
+        ],
+      ),
+    );
   }
 
 
@@ -348,11 +368,32 @@ class _buttonState extends State<button> {
       body: jsonEncode(<String,double>{
         'lat': latitude,
         'long': longitude,
-        }),
+      }),
     );
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
+      var data = response.body;
+      var decodedData = jsonDecode(data);
+      print("data:$decodedData");//"status": "Success"
+      String postResult = decodedData['status'];
+      if (postResult == "Success") {
+        http.Response getResponse = await http.get('https://ceg-covid.herokuapp.com/getValues');
+        //print("$response.statuscode");
+        var y = getResponse.statusCode;
+        print("get statuscode:$y");
+        if (getResponse.statusCode == 200) {
+          var getData = getResponse.body;
+          //print("data:$decodedData");
+          var getDecodedData = jsonDecode(getData);
+          print("data:$getDecodedData");
+          globales.distance = getDecodedData['value'];
+          print("dis:${globales.distance}");
+        }
+      }
+    }
+
+    /*if(response.statusCode == 200){
       var data = jsonDecode(response.body);
-     globales.distance = data['result'];
+     //globales.distance = data['result'];
      globales.value = data['Result'];
        print("distance:${globales.distance}");
        print("value:${globales.value}");
@@ -361,7 +402,7 @@ class _buttonState extends State<button> {
     else{
       print(response.statusCode);
       throw Exception('failed to load Album');
-    }
+    }*/
 
   }
 }

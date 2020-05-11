@@ -19,6 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  android_alarm_manager: ^0.4.5+10
   flutter_svg: ^0.17.1
   http: ^0.12.1
   intl: ^0.16.1
@@ -36,6 +37,10 @@ dependencies:
   flutter_local_notifications: ^1.4.2
   speech_recognition: ^0.3.0+1
   flutter_tts: ^1.1.0
+  speech_to_text: ^2.1.0
+  provider:
+  location: ^2.3.5
+
 
 
 dev_dependencies:

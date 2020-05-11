@@ -1,5 +1,4 @@
 package com.example.frontend1db;
-
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
