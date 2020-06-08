@@ -17,7 +17,6 @@ class InfoT extends StatelessWidget {
         backgroundColor: Colors.black,
       ),
       body: Container(
-
           child: Stack(
             children: <Widget>[
               Container(padding:EdgeInsets.only(top:200.0,left: 60.0),child: SvgPicture.asset('assets/bg5.svg',height: 200.0,)),
@@ -30,19 +29,6 @@ class InfoT extends StatelessWidget {
   }
 }
 
-/*class background extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Image.asset('assets/background1.jpg',),
-        ],
-      ),
-    );
-  }
-
-}*/
 
 class Formdetails extends StatefulWidget {
   @override
@@ -295,11 +281,11 @@ class _FormdetailsState extends State<Formdetails> {
                           return 'தவறான தொழில்';
                         else
                           return null;
-
                       },
                     ),
                   ),
                 ),
+
                 Container(
                   padding: EdgeInsets.only(left: 100.0, top: 40.0),
                   child: RaisedButton(
@@ -308,26 +294,8 @@ class _FormdetailsState extends State<Formdetails> {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => QuestionsT()));
                       }
-                      double data = globales.distance;
-                      print(globales.distance);
-                      double data_meter = data * 1000;
-                      print("meterdistance:$data_meter");
-                      //String i=data_meter.toString();
-                      if (data_meter < 1.0) {
-                        //database
-                        Firestore.instance.collection('info').document(
-                            '${globales.email}')
-                            .collection('Activities')
-                            .getDocuments()
-                            .then((QuerySnapshot snapshot) {
-                          globales.red = snapshot.documents[0]['red'];
-                        });
-                        int r = int.parse(globales.red);
-                        r = r + 1;
-                        globales.red = r.toString();
-                      }
 
-                      _fs.collection('info').document('$userName').collection('Activities').document('Activity 1').setData({
+                      _fs.collection('info').document('$userName').collection('Activities').document('Activity 1').updateData({
                         //'email': userName,
                         'name': globales.name,
                         'phone': globales.phoneNo,
@@ -335,7 +303,6 @@ class _FormdetailsState extends State<Formdetails> {
                         'occupation': globales.occupation,
                         'pincode': globales.pincode,
                         'sex': globales.sex,
-                        'red':globales.red,
                         'count':'1',
                       });
                     },

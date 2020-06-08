@@ -5,8 +5,16 @@ import 'package:audio_recorder/audio_recorder.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend1db/Dashboard.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+//import 'package:frontend1db/Cough.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 
 
 class Record extends StatefulWidget {
@@ -14,15 +22,56 @@ class Record extends StatefulWidget {
   _RecordState createState() => new _RecordState();
 }
 
+final _auth = FirebaseAuth.instance;
+final _fs = Firestore.instance;
+String userName;
+String date;
+int cough;
+
 class _RecordState extends State<Record> {
+
+  void initState() {
+
+    super.initState();
+    getUser();
+  }
+
+  void getUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        SharedPreferences logindata =await SharedPreferences.getInstance();
+        fbuser = user;
+        userName = fbuser.email;
+        print("User:$userName");
+        date=logindata.getString('date');
+        print(date);
+      }
+      else{
+        SharedPreferences logindata =await SharedPreferences.getInstance();
+        logindata = await SharedPreferences.getInstance();
+        userName=logindata.getString('username');
+        date=logindata.getString('date');
+        print(userName);
+      }
+
+      _fs.collection('info').document('$userName').collection('Activities').getDocuments().then((QuerySnapshot snapshot) {
+        cough = snapshot.documents[0]['cough'];
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey[700],
       appBar: AppBar(
-        title: Text("RECORDING YOUR AUDIO"),
+        title: Text("Record Audio"),
         centerTitle: true,
         backgroundColor: Colors.black,
+        leading:new Container(),
       ),
       resizeToAvoidBottomPadding: false,
       body:Stack(
@@ -32,6 +81,27 @@ class _RecordState extends State<Record> {
           AppBody(),
         ],
       ),
+        bottomNavigationBar:CurvedNavigationBar(
+            color: Colors.black,
+            backgroundColor: Colors.blueGrey[700],
+            buttonBackgroundColor: Colors.black,
+            height: 70,
+            index: 0,
+            items: <Widget>[
+              Icon(Icons.mic,size: 20, color: Colors.white),
+              Icon(Icons.dashboard, size: 20, color: Colors.white),
+             // Icon(Icons.today, size: 20, color: Colors.white),
+            ],
+            animationDuration: Duration(
+                milliseconds: 313
+            ),
+            onTap: (index){
+              if(index == 1){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Dashboard()));
+              }
+            }
+        )
     );
   }
 }
@@ -52,99 +122,109 @@ class AppBodyState extends State<AppBody> {
   Random random = new Random();
   TextEditingController _controller = new TextEditingController();
 String info;
+
   @override
   Widget build(BuildContext context) {
-    return new Center(
+    return SingleChildScrollView(
+      child: new Center(
 
-        child: new Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-            Container(
-                padding:EdgeInsets.only(top:10.0,left: 0.0,right: 0.0),
-                child: Column(
-                  children: <Widget>[
-                    new IconButton(icon: Icon(Icons.mic,),
-                      onPressed: _isRecording ? null : _start,iconSize: 40.0,color: Colors.green,),
-                    Text("Start",style: TextStyle(fontSize: 20.0,color: Colors.green),),
-
-                  ],
-                ),
-              ),
+          child: new Column(
+              //mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
               Container(
-                padding:EdgeInsets.only(top:0.0,left: 0.0,right: 0.0,bottom: 100.0),
-                child: Column(
-                  children: <Widget>[
-                    new IconButton(
-                      icon: Icon(Icons.stop,color: Colors.red,),
-                      onPressed: _isRecording ? _stop : null,iconSize: 40.0,),
-                       Text("Stop",style: TextStyle(fontSize: 20.0,color: Colors.red)),
+                  padding:EdgeInsets.only(top:10.0,left: 0.0,right: 0.0),
+                  child: Column(
+                    children: <Widget>[
+                      new IconButton(icon: Icon(Icons.mic,),
+                        onPressed: _isRecording ? null : _start,iconSize: 40.0,color: Colors.green,),
+                      Text("Start",style: TextStyle(fontSize: 20.0,color: Colors.green),),
 
-                  ],
-                ),
-              ),
-    Container(
-    padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
-    margin: EdgeInsets.only(top:0.0,bottom: 30.0,right:0.0),
-
-    decoration: BoxDecoration(
-    color: Colors.white.withOpacity(0.7),
-    border: Border.all(width: 1.0,color: Colors.black87),
-    borderRadius: BorderRadius.only(
-    topRight: Radius.circular(20.0),
-    bottomLeft: Radius.circular(20.0),
-    // bottomRight: Radius.circular(20.0),
-    ),
-    ),
-             child: Container(
-                child: new TextField(
-                  controller: _controller,
-                  decoration: new InputDecoration(
-                    hintText: 'Enter a path to store:',
+                    ],
                   ),
                 ),
-              ),),
-              Container(
-                //padding: EdgeInsets.all(20.0),
-                padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
-                margin: EdgeInsets.only(top:0.0,bottom: 0.0,right:0.0),
+                Container(
+                  padding:EdgeInsets.only(top:0.0,left: 0.0,right: 0.0,bottom: 100.0),
+                  child: Column(
+                    children: <Widget>[
+                      new IconButton(
+                        icon: Icon(Icons.stop,color: Colors.red,),
+                        onPressed: _isRecording ? _stop : null,iconSize: 40.0,),
+                         Text("Stop",style: TextStyle(fontSize: 20.0,color: Colors.red)),
 
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.7),
-                  border: Border.all(width: 1.0,color: Colors.black87),
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20.0),
-                    bottomLeft: Radius.circular(20.0),
-                   // bottomRight: Radius.circular(20.0),
+                    ],
                   ),
                 ),
-             child: Column(
-                children: <Widget>[
-                  Container(child: new Text("File path of the record: ${_recording.path}\n",)),
-                  //new Text("Format: ${_recording.audioOutputFormat}\n"),
-                  new Text("Extension : ${_recording.extension}\n"),
-                  new Text("Audio recording duration : ${_recording.duration.toString()}\n")
-                ],
-              ),
-    ),
-              Container(
-                padding:EdgeInsets.only(top:0.0,left: 0.0,right: 0.0,bottom: 0.0),
-                child: Column(
-                  children: <Widget>[
-                    RaisedButton(onPressed: (){
-                      uploadAudio(_recording.path);
-                    },
-                    child: Text('ok',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                        ),),
+      Container(
+      padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
+      margin: EdgeInsets.only(top:0.0,bottom: 30.0,right:0.0),
+
+      decoration: BoxDecoration(
+      color: Colors.white.withOpacity(0.7),
+      border: Border.all(width: 1.0,color: Colors.black87),
+      borderRadius: BorderRadius.only(
+      topRight: Radius.circular(20.0),
+      bottomLeft: Radius.circular(20.0),
+      // bottomRight: Radius.circular(20.0),
+      ),
+      ),
+               child: Container(
+                  child: new TextField(
+                    controller: _controller,
+                    decoration: new InputDecoration(
+                      hintText: 'Enter a path to store:',
                     ),
+                  ),
+                ),),
+                Container(
+                  //padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
+                  margin: EdgeInsets.only(top:0.0,bottom: 0.0,right:0.0),
 
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.7),
+                    border: Border.all(width: 1.0,color: Colors.black87),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20.0),
+                      bottomLeft: Radius.circular(20.0),
+                     // bottomRight: Radius.circular(20.0),
+                    ),
+                  ),
+               child: Column(
+                  children: <Widget>[
+                    Container(child: new Text("File path of the record: ${_recording.path}\n",)),
+                    //new Text("Format: ${_recording.audioOutputFormat}\n"),
+                    new Text("Extension : ${_recording.extension}\n"),
+                    new Text("Audio recording duration : ${_recording.duration.toString()}\n")
                   ],
                 ),
-              ),
-            ]
-        ),
+      ),
+                Container(
+                  padding:EdgeInsets.only(top:0.0,left: 0.0,right: 0.0,bottom: 0.0),
+                  child: Column(
+                    children: <Widget>[
+                      RaisedButton(onPressed: (){
 
+                        cough = cough +1;
+                        _fs.collection('info').document(
+                            '$userName').collection(
+                            'Activities')
+                            .document('Activity 1')
+                            .updateData({
+                          'cough':cough
+                        });
+                      },
+                      child: Text('ok',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),),
+                      ),
+
+                    ],
+                  ),
+                ),
+              ]
+          ),
+      ),
     );
   }
 
@@ -154,7 +234,8 @@ String info;
         if (_controller.text != null && _controller.text != "") {
           String path = _controller.text;
           if (!_controller.text.contains('/')) {
-            io.Directory appDocDirectory = await getApplicationDocumentsDirectory();
+            io.Directory appDocDirectory =
+            await getApplicationDocumentsDirectory();
             path = appDocDirectory.path + '/' + _controller.text;
           }
           print("Start recording: $path");
@@ -228,6 +309,4 @@ Future<String> uploadAudio(filepath) async {
       }
     //return res.reasonPhrase;
 }
-
-
 }

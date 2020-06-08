@@ -1,20 +1,13 @@
-//import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend1db/main.dart';
-//import 'package:speech_recognition/speech_recognition.dart';
-//import 'package:rflutter_alert/rflutter_alert.dart';
-//import 'Login.dart';
+//import 'package:frontend1db/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-//import 'globals.dart' as globales;
-//import 'package:speech_recognition/speech_recognition.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'main.dart';
+import 'login.dart';
+//import 'package:intl/intl.dart';
 
 class Signup extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,7 +17,6 @@ class Signup extends StatelessWidget {
 }
 
 class FullScreenPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +42,9 @@ class FullScreenPage extends StatelessWidget {
   }
 }
 
+String now = DateTime.now().toString();
+String todaydate = now.substring(0,10);
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -66,7 +61,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
     return SingleChildScrollView(
       child: Center(
         child: Form(
@@ -90,14 +84,11 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 child: Container(
-
                   child: TextFormField(
-
                     onChanged: (val) {
                       email = val;
                     },
                     decoration: const InputDecoration(
-
                         icon: Icon(Icons.alternate_email, color: Colors.black, size: 40.0),
                         hintText: 'EmailId',
                         hintStyle: TextStyle(color: Colors.black),
@@ -111,17 +102,15 @@ class _HomeState extends State<Home> {
                         return 'Invalid username';
                       else
                         return null;
-
                     },
                   ),
                 ),
               ),
 
-        Container(
-
-          padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
-          margin: EdgeInsets.only(top:10.0,bottom: 65.0,left:80.0),
-          decoration: BoxDecoration(
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
+            margin: EdgeInsets.only(top:10.0,bottom: 65.0,left:80.0),
+            decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.7),
               border: Border.all(width: 1.0,color: Colors.black),
               borderRadius: BorderRadius.only(
@@ -131,7 +120,6 @@ class _HomeState extends State<Home> {
               )
           ),
               child:Container(
-                //padding: EdgeInsets.all(20.0),
                 child: TextFormField(
                   onChanged: (val) {
                     password = val;
@@ -152,17 +140,13 @@ class _HomeState extends State<Home> {
                         r'^[ A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$';
                     RegExp regex = new RegExp(pattern);
                     if (!regex.hasMatch(password)   )
-                      {
-                       // if(password.length<6)
-                          return 'Invalid password/\npassword is less than 6\ncharacter';
-
-                    }
+                      return 'Invalid password/\npassword is less than 6\ncharacter';
                     else
                       return null;
                   },
                 ),
               ),
-        ),
+            ),
               Container(
                 padding: EdgeInsets.only(left: 20.0, top: 50.0),
                 child: RaisedButton(
@@ -170,7 +154,6 @@ class _HomeState extends State<Home> {
                     dynamic newUser;
                     if(_formKey.currentState.validate()) {
                       try {
-                        // globales.count=0;
                         newUser = await _auth.createUserWithEmailAndPassword(
                             email: email, password: password);
                       }
@@ -181,13 +164,15 @@ class _HomeState extends State<Home> {
                         final startindex = i.indexOf('(');
                         final finalindex = i.indexOf(',');
                         info = i.substring(startindex,finalindex);
-
                       }
 
                         if (newUser != null) {
                           _fs.collection('info').document('$email').collection('Activities').document('Activity 1').setData({
                             'count':'0',
                             'red':'0',
+                            'date':todaydate,
+                            'colour':'green',
+                            'cough':0
                           });
                            showDialog(
                               context: context,
@@ -201,11 +186,13 @@ class _HomeState extends State<Home> {
                                     new FlatButton(
                                    child: new Text("Ok"),
                                     onPressed: () {
-                                     Navigator.of(context).pop();},),
-                                   ],);},);
+                                     Navigator.of(context).pop();
+                                     },),
+                                   ],);
+                                },);
 
                           Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => FirstPage()));
+                              MaterialPageRoute(builder: (context) => Login()));
                         }
 
                         else if(info == "(ERROR_NETWORK_REQUEST_FAILED")
@@ -273,12 +260,6 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-
-
-                  //  SizedBox(height: 12.0,),
-                  //  Text(error,
-                   //     style: TextStyle(color: Colors.red, fontSize: 14.0))
-
             ],
           ),
         ),

@@ -5,7 +5,16 @@ import 'package:audio_recorder/audio_recorder.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:flutter/material.dart';
+//import 'package:frontend1db/CoughT.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'DashboardT.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 
 
 class RecordT extends StatefulWidget {
@@ -13,15 +22,56 @@ class RecordT extends StatefulWidget {
   _RecordTState createState() => new _RecordTState();
 }
 
+final _auth = FirebaseAuth.instance;
+final _fs = Firestore.instance;
+String userName;
+String date;
+int cough;
+
 class _RecordTState extends State<RecordT> {
+
+  void initState() {
+
+    super.initState();
+    getUser();
+  }
+
+  void getUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        SharedPreferences logindata =await SharedPreferences.getInstance();
+        fbuser = user;
+        userName = fbuser.email;
+        print("User:$userName");
+        date=logindata.getString('date');
+        print(date);
+      }
+      else{
+        SharedPreferences logindata =await SharedPreferences.getInstance();
+        logindata = await SharedPreferences.getInstance();
+        userName=logindata.getString('username');
+        date=logindata.getString('date');
+        print(userName);
+      }
+
+      _fs.collection('info').document('$userName').collection('Activities').getDocuments().then((QuerySnapshot snapshot) {
+        cough = snapshot.documents[0]['cough'];
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey[700],
       appBar: AppBar(
-        title: Text("உங்கள் ஆடியோவைப் பதிவுசெய்கிறது"),
-        centerTitle: true,
+        title: Text("ஆடியோவைப் பதிவுசெய்"),
+        //centerTitle: true,
         backgroundColor: Colors.black,
+        leading:new Container(),
       ),
       resizeToAvoidBottomPadding: false,
       body:Stack(
@@ -31,6 +81,27 @@ class _RecordTState extends State<RecordT> {
           AppBody(),
         ],
       ),
+        bottomNavigationBar:CurvedNavigationBar(
+            color: Colors.black,
+            backgroundColor: Colors.blueGrey[700],
+            buttonBackgroundColor: Colors.black,
+            height: 70,
+            index: 0,
+            items: <Widget>[
+              Icon(Icons.mic,size: 20, color: Colors.white),
+              Icon(Icons.dashboard, size: 20, color: Colors.white),
+              //Icon(Icons.today, size: 20, color: Colors.white),
+            ],
+            animationDuration: Duration(
+                milliseconds: 313
+            ),
+            onTap: (index){
+              if(index == 1){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => DashboardT()));
+              }
+            }
+        )
     );
   }
 }
@@ -51,83 +122,109 @@ class AppBodyState extends State<AppBody> {
   Random random = new Random();
   TextEditingController _controller = new TextEditingController();
   String info;
+
   @override
   Widget build(BuildContext context) {
-    return new Center(
+    return SingleChildScrollView(
+      child: new Center(
 
-      child: new Column(
-        //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Container(
-              padding:EdgeInsets.only(top:10.0,left: 0.0,right: 0.0),
-              child: Column(
-                children: <Widget>[
-                  new IconButton(icon: Icon(Icons.mic,),
-                    onPressed: _isRecording ? null : _start,iconSize: 40.0,color: Colors.green,),
-                  Text("தொடங்கு",style: TextStyle(fontSize: 20.0,color: Colors.green),),
+        child: new Column(
+          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Container(
+                padding:EdgeInsets.only(top:10.0,left: 0.0,right: 0.0),
+                child: Column(
+                  children: <Widget>[
+                    new IconButton(icon: Icon(Icons.mic,),
+                      onPressed: _isRecording ? null : _start,iconSize: 40.0,color: Colors.green,),
+                    Text("தொடங்கு",style: TextStyle(fontSize: 20.0,color: Colors.green),),
 
-                ],
-              ),
-            ),
-            Container(
-              padding:EdgeInsets.only(top:0.0,left: 0.0,right: 0.0,bottom: 100.0),
-              child: Column(
-                children: <Widget>[
-                  new IconButton(
-                    icon: Icon(Icons.stop,color: Colors.red,),
-                    onPressed: _isRecording ? _stop : null,iconSize: 40.0,),
-                  Text("நிறுத்து",style: TextStyle(fontSize: 20.0,color: Colors.red)),
-
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
-              margin: EdgeInsets.only(top:0.0,bottom: 30.0,right:0.0),
-
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                border: Border.all(width: 1.0,color: Colors.black87),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20.0),
-                  bottomLeft: Radius.circular(20.0),
-                  // bottomRight: Radius.circular(20.0),
+                  ],
                 ),
               ),
-              child: Container(
-                child: new TextField(
-                  controller: _controller,
-                  decoration: new InputDecoration(
-                    hintText: 'சேமிக்க ஒரு பாதையை உள்ளிடவும்:',
+              Container(
+                padding:EdgeInsets.only(top:0.0,left: 0.0,right: 0.0,bottom: 100.0),
+                child: Column(
+                  children: <Widget>[
+                    new IconButton(
+                      icon: Icon(Icons.stop,color: Colors.red,),
+                      onPressed: _isRecording ? _stop : null,iconSize: 40.0,),
+                    Text("நிறுத்து",style: TextStyle(fontSize: 20.0,color: Colors.red)),
+
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
+                margin: EdgeInsets.only(top:0.0,bottom: 30.0,right:0.0),
+
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.7),
+                  border: Border.all(width: 1.0,color: Colors.black87),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20.0),
+                    bottomLeft: Radius.circular(20.0),
+                    // bottomRight: Radius.circular(20.0),
                   ),
                 ),
-              ),),
-            Container(
-              //padding: EdgeInsets.all(20.0),
-              padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
-              margin: EdgeInsets.only(top:0.0,bottom: 0.0,right:0.0),
+                child: Container(
+                  child: new TextField(
+                    controller: _controller,
+                    decoration: new InputDecoration(
+                      hintText: 'சேமிக்க ஒரு பாதையை உள்ளிடவும்:',
+                    ),
+                  ),
+                ),),
+              Container(
+                //padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
+                margin: EdgeInsets.only(top:0.0,bottom: 0.0,right:0.0),
 
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                border: Border.all(width: 1.0,color: Colors.black87),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20.0),
-                  bottomLeft: Radius.circular(20.0),
-                  // bottomRight: Radius.circular(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.7),
+                  border: Border.all(width: 1.0,color: Colors.black87),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20.0),
+                    bottomLeft: Radius.circular(20.0),
+                    // bottomRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Container(child: new Text("பதிவின் கோப்பு பாதை: ${_recording.path}\n",)),
+                    //new Text("Format: ${_recording.audioOutputFormat}\n"),
+                    new Text("Extension : ${_recording.extension}\n"),
+                    new Text("ஆடியோ பதிவு காலம் : ${_recording.duration.toString()}\n")
+                  ],
                 ),
               ),
-              child: Column(
-                children: <Widget>[
-                  Container(child: new Text("பதிவின் கோப்பு பாதை: ${_recording.path}\n",)),
-                  //new Text("Format: ${_recording.audioOutputFormat}\n"),
-                  new Text("Extension : ${_recording.extension}\n"),
-                  new Text("ஆடியோ பதிவு காலம் : ${_recording.duration.toString()}\n")
-                ],
-              ),
-            ),
-          ]
-      ),
+              Container(
+                padding:EdgeInsets.only(top:0.0,left: 0.0,right: 0.0,bottom: 0.0),
+                child: Column(
+                  children: <Widget>[
+                    RaisedButton(onPressed: (){
 
+                      cough = cough +1;
+                      _fs.collection('info').document(
+                          '$userName').collection(
+                          'Activities')
+                          .document('Activity 1')
+                          .updateData({
+                        'cough':cough
+                      });
+                      },
+                      child: Text('ok',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        ),),
+                    ),
+
+                  ],
+                ),
+              ),
+            ]
+        ),
+      ),
     );
   }
 
@@ -179,9 +276,6 @@ class AppBodyState extends State<AppBody> {
             ],);},);
 
     }
-
-
-
   }
 
   _stop() async {
@@ -195,5 +289,24 @@ class AppBodyState extends State<AppBody> {
       _isRecording = isRecording;
     });
     _controller.text = recording.path;
+  }
+
+
+  Future<String> uploadAudio(filepath) async {
+    var request = http.MultipartRequest('POST',Uri.parse('https://ceg-covid.herokuapp.com/audio',));
+    request.files.add(await http.MultipartFile.fromPath(filepath,'audio'));
+    var res = await request.send();
+    print(res);
+    final response = await http.get('https://ceg-covid.herokuapp.com/audio');
+
+    if(response.statusCode == 200)
+    {
+      print(response);
+    }
+    else
+    {
+      throw Exception("file not found");
+    }
+    //return res.reasonPhrase;
   }
 }

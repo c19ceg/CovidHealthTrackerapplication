@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_recognition/speech_recognition.dart';
-import 'Knowyourself.dart';
+import 'Dashboard.dart';
 
 class Questions extends StatelessWidget {
   @override
@@ -46,6 +47,10 @@ class background extends StatelessWidget {
 
 }
 
+var now = DateTime.now();
+String sdays = now.add((Duration(days: 7))).toString();
+String seventhday = sdays.substring(0,10);
+
 
 class Formdetails extends StatefulWidget {
   @override
@@ -55,6 +60,7 @@ class Formdetails extends StatefulWidget {
 class _FormdetailsState extends State<Formdetails> {
   final _fs = Firestore.instance;
   final FlutterTts flutterTts = FlutterTts();
+
   SpeechRecognition _speechRecognition = SpeechRecognition();
   SpeechRecognition _speechRecognition2 = SpeechRecognition();
   SpeechRecognition _speechRecognition3 = SpeechRecognition();
@@ -102,6 +108,15 @@ class _FormdetailsState extends State<Formdetails> {
   void initState() {
     super.initState();
     getUser();
+    Future.delayed(Duration(seconds: 2),()
+    {
+      flutterTts.setLanguage("en-IN");
+      flutterTts.setPitch(1);
+      flutterTts.setSpeechRate(1.0);
+      flutterTts.speak(
+          "In this page you have to answer yes or no.");
+    }
+    );
   }
   void getUser() async {
     try {
@@ -2072,8 +2087,9 @@ class _FormdetailsState extends State<Formdetails> {
                           qn15: ans15,
                           qn16: ans16,
                         });
+                        setdate();
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Knowyourself()));
+                            MaterialPageRoute(builder: (context) => Loader()));
                       }
                       else {
                         Scaffold.of(context)
@@ -2089,6 +2105,11 @@ class _FormdetailsState extends State<Formdetails> {
         ),
       ),
     );
+  }
+  Future<void> setdate() async{
+    SharedPreferences logindata =await SharedPreferences.getInstance();
+    logindata.setString('date',seventhday);
+    print(logindata.getString('date'));
   }
 }
 

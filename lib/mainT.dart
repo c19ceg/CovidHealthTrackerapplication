@@ -1,12 +1,13 @@
 //import 'package:covid/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'delayed_animation.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'LoginT.dart';
 import 'SignupT.dart';
-import 'dart:convert';
 import 'main.dart';
-import 'globals.dart'as globales;
-import 'package:http/http.dart' as http;
+//import 'dart:async';
+import 'package:flutter_tts/flutter_tts.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 void mainT() => runApp(MyAppT());
 
@@ -20,7 +21,20 @@ class MyAppT extends StatelessWidget {
   }
 }
 
-class FirstPageT extends StatelessWidget {
+class FirstPageT extends StatefulWidget {
+  @override
+  _FirstPageTState createState() => _FirstPageTState();
+}
+
+class _FirstPageTState extends State<FirstPageT> {
+  final FlutterTts flutterTts = FlutterTts();
+
+  void initState(){
+    flutterTts.setLanguage("ta-IN");
+    flutterTts.setPitch(1);
+    flutterTts.setSpeechRate(1.0);
+    flutterTts.speak("வணக்கம், நான் Covid Health Tracker. நான் உங்கள் உடல்நிலையை கண்காணித்து , சமூக விலகலை பின்பற்ற உங்களுக்கு உதவுவேன்.");
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,7 +42,7 @@ class FirstPageT extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'TRACK-O-METER',
+              'Covid Health Tracker',
               style: TextStyle(fontSize: 20.0),
             ),
             centerTitle: true,
@@ -38,8 +52,6 @@ class FirstPageT extends StatelessWidget {
             padding: EdgeInsets.only(top: 10.0),
             child: Stack(
               children: <Widget>[
-
-              //  Container(padding:EdgeInsets.only(top:10.0,left: 10.0),child: SvgPicture.asset('assets/home.svg',height: 200.0,)),
                 button(),
               ],
             ),color: Colors.blueGrey[700],
@@ -55,189 +67,148 @@ class button extends StatefulWidget {
   _buttonState createState() => _buttonState();
 }
 
-class _buttonState extends State<button> {
+class _buttonState extends State<button> with SingleTickerProviderStateMixin {
+  final int delayAmount = 500;
+  @override
+  void initState() {
+     AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: 200,
+      ),
+      lowerBound: 0.0,
+      upperBound: 0.1,
+    )
+      ..addListener(() {
+        setState(() {});
+      });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+
         children: <Widget>[
-          Text(
-            'வணக்கம், பயனர்\n',
-            style: TextStyle(
-              fontSize: 30.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[100],
-            ),
-          ),SizedBox(height: 10.0),
-          Text('புதிய பயனர்?', style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-          Text("ஒரு கணக்கை உருவாக்க:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
+          AvatarGlow(
+            endRadius: 90,
+            duration: Duration(seconds: 2),
+            glowColor: Colors.white,
+            repeat: true,
+            repeatPauseDuration: Duration(seconds: 2),
+            startDelay: Duration(seconds: 1),
+            child: Material(
+              elevation: 8.0,
 
-          SizedBox(height: 10.0),
-          RaisedButton(
-            child: Text(
-              'பதிவுபெறுதல்',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => SignupT()));
-            },
-          ),
-          SizedBox(height: 30.0),
-          Text('தற்போதுள்ள பயனரா?', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-          Text("உள்நுழைய:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-
-          if(globales.currentPosition != null)
-            Text("lat: ${globales.currentPosition.latitude},lang: ${globales.currentPosition.longitude}"),
-
-          SizedBox(height: 10.0),
-          RaisedButton(
-            child: Text(
-              'உள்நுழைய',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            onPressed: () {
-              try {
-                createAlbum(globales.currentPosition.latitude,
-                    globales.currentPosition.longitude);
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => LoginT()));
-                try {
-                  double data = globales.distance;
-                  double data_meter = data * 1000;
-                  print("meterdistance:$data_meter");
-                  String i = data_meter.toString();
-                  if (data_meter < 1.0) {
-                    final startindex = i.indexOf('0');
-                    final finalindex = i.indexOf('.');
-                    String info = i.substring(startindex, finalindex + 2);
-                    print("info:$info");
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // return object of type Dialog
-                        return AlertDialog(
-                          title: new Text("தகவல்"),
-                          content: Text(
-                              "தூரம்$info,\nஉங்கள் இடத்திலிருந்து உடனடியாக நகர்த்தவும்",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,)),
-                          actions: <Widget>[
-                            // usually buttons at the bottom of the dialog
-                            new FlatButton(
-                              child: new Text("சரி"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },),
-                          ],);
-                      },);
-                  }
-                  else {
-                    /* final startindex = i.indexOf('1');
-                  final finalindex = i.indexOf('.');
-                  String info = i.substring(startindex,finalindex+2);
-                  print("info:$info");*/
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // return object of type Dialog
-                        return AlertDialog(
-                          title: new Text("தகவல்"),
-                          content: Text("தூரம்:${globales.distance},",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,)),
-                          actions: <Widget>[
-                            // usually buttons at the bottom of the dialog
-                            new FlatButton(
-                              child: new Text("சரி"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },),
-                          ],);
-                      },);
-                  }
-                }
-                catch (e) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      // return object of type Dialog
-                      return AlertDialog(
-                        title: new Text("தகவல்"),
-                        content: Text("கவனமாக இருக்கவும்,", style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.green,)),
-                        actions: <Widget>[
-                          // usually buttons at the bottom of the dialog
-                          new FlatButton(
-                            child: new Text("சரி"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },),
-                        ],);
-                    },);
-                }
-              }
-              catch(e){
-               // globales.distance =2.0;
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    // return object of type Dialog
-                    return AlertDialog(
-                      title: new Text("தகவல்"),
-                      content: Text("உங்கள் சாதன இருப்பிட பொத்தானை இயக்கி பயன்பாட்டை மறுதொடக்கம் செய்யுங்கள்.", style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black,)),
-                      actions: <Widget>[
-                        // usually buttons at the bottom of the dialog
-                        new FlatButton(
-                          child: new Text("சரி"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },),
-                      ],);
-                  },);
-              }
-
-            },
-          ),
-          Container(
-
-            child: Column(
-              children: <Widget>[
-                SizedBox(width: 0.0,height: 40.0,),
-                Text("TO CHANGE APP LANGUAGE:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-
-                RaisedButton(
-                  child: Text("English",style: TextStyle(fontSize: 20.0,),),
-
-                  onPressed: (){
-                    this.setState((){
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => FirstPage()));
-                    });
-                  },
+              shape: CircleBorder(),
+              child: CircleAvatar(
+                backgroundColor: Colors.grey,
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  backgroundImage: AssetImage('assets/logo.png'),
+                  radius: 50.0,
                 ),
-              ],
+                radius: 50.0,
+              ),
             ),
-
+          ),
+          DelayedAnimation(
+            child: Text("வரவேற்பு", style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 25.0,
+                color: Colors.white),),
+            delay: delayAmount + 1000,
+          ),
+          DelayedAnimation(
+            child: Text("நான் கோவிட் ஹெல்த் டிராக்கர்", style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+                color: Colors.white),),
+            delay: delayAmount + 2000,
+          ),
+          SizedBox(height: 80.0,),
+          DelayedAnimation(
+            child: Text("ஏற்கனவே ஒரு கணக்கு உள்ளதா??", style: TextStyle(
+                fontSize: 19.0,
+                color: Colors.white),),
+            delay: delayAmount + 3000,
+          ), SizedBox(height: 10.0,),
+          DelayedAnimation(
+            child: RaisedButton(
+                child: Text(
+                  'உள்நுழைய',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginT()));
+                }),
+            delay: delayAmount + 4000,
+          ), SizedBox(height: 20.0,),
+          DelayedAnimation(
+            child: Text("புதிய கணக்கை துவங்கு", style: TextStyle(
+                fontSize: 19.0,
+                color: Colors.white),),
+            delay: delayAmount + 5000,
+          ), SizedBox(height: 10.0,),
+          DelayedAnimation(
+            child: RaisedButton(
+                child: Text(
+                  'பதிவுபெறுக',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignupT()));
+                }),
+            delay: delayAmount + 6000,
+          ),
+          SizedBox(height: 20.0,),
+          DelayedAnimation(
+            child: Text("To change App language", style: TextStyle(
+                fontSize: 19.0,
+                color: Colors.white),),
+            delay: delayAmount + 7000,
+          ), SizedBox(height: 10.0,),
+          DelayedAnimation(
+            child: RaisedButton(
+                child: Text(
+                  'English',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FirstPage()));
+                }),
+            delay: delayAmount + 8000,
           ),
         ],
       ),
     );
   }
+}
+
+
+/*
   Future<Album> createAlbum(double latitude,double longitude) async{
 
     final http.Response response = await http.post(
@@ -267,12 +238,11 @@ class _buttonState extends State<button> {
       }
     }
 
-    }
-
-  }
+    }*/
 
 
-class Album {
+
+/*class Album {
   final double longitude;
   final double latitude;
 
@@ -287,3 +257,4 @@ class Album {
     );
   }
 }
+*/

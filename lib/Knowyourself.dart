@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frontend1db/Cough.dart';
 import 'package:frontend1db/Sneeze.dart';
 //import 'dart:math';
@@ -41,6 +41,28 @@ class Yourdetails extends StatefulWidget {
 }
 
 class _YourdetailsState extends State<Yourdetails> {
+  final _auth = FirebaseAuth.instance;
+  //final _fs = Firestore.instance;
+  FirebaseUser fbuser;
+  String userName;
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
+
+  void getUser() async {
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        fbuser = user;
+        userName = fbuser.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return  SingleChildScrollView(
@@ -181,6 +203,26 @@ class _YourdetailsState extends State<Yourdetails> {
             onPressed: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Record()));
+            },
+          ),
+
+          RaisedButton(
+            child: Text(
+              'Detailed Report',
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(20.0),
+                bottomLeft: Radius.circular(20.0),
+                // bottomRight: Radius.circular(20.0),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Dashboard()));
             },
           ),
 

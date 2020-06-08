@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend1db/Dashboard.dart';
 //import 'package:frontend1db/auth.dart';
-
+import 'Record.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Dashboard.dart';
-
-
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class Cough extends StatelessWidget {
   @override
@@ -50,7 +49,7 @@ class _FullScreenPageState extends State<FullScreenPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'COUGH DETAILS',
+          'Cough Details',
         ),
         backgroundColor: Colors.black,
         centerTitle: true,
@@ -64,11 +63,35 @@ class _FullScreenPageState extends State<FullScreenPage> {
 //SizedBox(width: 200.0,),
             Container(padding:EdgeInsets.only(top:200.0,left: 60.0),child: SvgPicture.asset('assets/bg5.svg',height: 200.0,)),
             Details(),
-
           ],
         ),
-
       ),
+        bottomNavigationBar:CurvedNavigationBar(
+            color: Colors.black,
+            backgroundColor: Colors.blueGrey[700],
+            buttonBackgroundColor: Colors.black,
+            height: 70,
+            index: 2,
+            items: <Widget>[
+
+              Icon(Icons.mic,size: 20, color: Colors.white),
+              Icon(Icons.dashboard, size: 20, color: Colors.white),
+              Icon(Icons.today, size: 20, color: Colors.white),
+            ],
+            animationDuration: Duration(
+                milliseconds: 313
+            ),
+            onTap: (index){
+              if(index == 0){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Record()));
+              }
+              if(index == 1){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Dashboard()));
+              }
+            }
+        )
     );
   }
 }
@@ -81,6 +104,7 @@ class Details extends StatelessWidget {
     return
       Column(
         children: <Widget>[
+          SizedBox(height: 70.0,),
           Center(
             child: Container(
               decoration: BoxDecoration(
@@ -98,26 +122,6 @@ class Details extends StatelessWidget {
 
                 style: TextStyle(color: Colors.red[900], fontSize: 20.0),),
             ),
-          ),
-          RaisedButton(
-            child: Text(
-              'Detailed Report',
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20.0),
-                bottomLeft: Radius.circular(20.0),
-                // bottomRight: Radius.circular(20.0),
-              ),
-            ),
-
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Dashboard()));
-            },
           ),
         ],
       );

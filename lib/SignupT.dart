@@ -1,14 +1,11 @@
-//import 'dart:io';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
-//import 'package:frontend1db/LoginT.dart';
-//import 'package:frontend1db/main.dart';
-//import 'package:rflutter_alert/rflutter_alert.dart';
-import 'mainT.dart';
+import 'loginT.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:intl/intl.dart';
+import 'mainT.dart';
 
 class SignupT extends StatelessWidget {
   @override
@@ -24,8 +21,14 @@ class FullScreenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'பதிவுசெய்க',
+        title: Row(
+          children: <Widget>[
+            IconButton(padding:EdgeInsets.only(right: 80.0),onPressed:(){ Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyAppT()));}, icon:Icon(Icons.arrow_back),),
+            Text(
+              'பதிவுசெய்க',
+            ),],
         ),
         backgroundColor: Colors.black,
         centerTitle: true,
@@ -40,16 +43,14 @@ class FullScreenPage extends StatelessWidget {
             Home(),
           ],
         ),
-        // decoration: BoxDecoration(
-        // color: Colors.white,
-        //image: DecorationImage(
-        //    image: AssetImage('assets/bg4.svg'), ),
-        // ),
-        // child: Home(),
       ),
     );
   }
 }
+
+String now = DateTime.now().toString();
+String todaydate = now.substring(0,10);
+
 
 class Home extends StatefulWidget {
   @override
@@ -81,15 +82,14 @@ class _HomeState extends State<Home> {
                 margin: EdgeInsets.only(top:170.0,bottom: 90.0,right:80.0),
 
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.7),
-                  border: Border.all(width: 1.0,color: Colors.black87),
-                  borderRadius: BorderRadius.only(
+                    color: Colors.white.withOpacity(0.7),
+                    border: Border.all(width: 1.0,color: Colors.black87),
+                    borderRadius: BorderRadius.only(
                     topRight: Radius.circular(20.0),
                     bottomLeft: Radius.circular(20.0),
                     bottomRight: Radius.circular(20.0),
                   ),
                 ),
-
                 child: Container(
                   child: TextFormField(
                     onChanged: (val) {
@@ -109,14 +109,12 @@ class _HomeState extends State<Home> {
                         return 'தவறான அஞ்சல் ஐடி';
                       else
                         return null;
-
                     },
                   ),
                 ),
               ),
 
               Container(
-
                 padding: EdgeInsets.symmetric(horizontal: 25.0,vertical: 15.0),
                 margin: EdgeInsets.only(top:0.0,bottom: 80.0,left:45.0),
                 decoration: BoxDecoration(
@@ -153,6 +151,9 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
+
+
+
               Container(
                 padding: EdgeInsets.only(left: 20.0, top: 50.0),
                 child: RaisedButton(
@@ -161,7 +162,8 @@ class _HomeState extends State<Home> {
                     if(_formKey.currentState.validate()) {
                       try {
                         newUser = await _auth.createUserWithEmailAndPassword(
-                            email: email, password: password);}
+                            email: email, password: password);
+                      }
                       catch (e) {
                         print(e);
                         newUser=null;
@@ -169,13 +171,15 @@ class _HomeState extends State<Home> {
                         final startindex = i.indexOf('(');
                         final finalindex = i.indexOf(',');
                          info = i.substring(startindex,finalindex);
-
                       }
 
                       if (newUser != null) {
                         _fs.collection('info').document('$email').collection('Activities').document('Activity 1').setData({
                           'count':'0',
                           'red':'0',
+                          'date':todaydate,
+                          'colour':'green',
+                          'cough':0
                         });
                         showDialog(
                           context: context,
@@ -183,8 +187,7 @@ class _HomeState extends State<Home> {
                             // return object of type Dialog
                             return AlertDialog(
                               title: new Text("செய்தி"),
-                              content: new Text(
-                                  "வெற்றிகரமாக பதிவு செய்யப்பட்டது"),
+                              content: new Text("வெற்றிகரமாக பதிவு செய்யப்பட்டது"),
                               actions: <Widget>[
                                 // usually buttons at the bottom of the dialog
                                 new FlatButton(
@@ -196,9 +199,8 @@ class _HomeState extends State<Home> {
                           },);
 
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => FirstPageT()));
+                            MaterialPageRoute(builder: (context) => LoginT()));
                       }
-
 
                       else if(info == "(ERROR_NETWORK_REQUEST_FAILED")
                           {
@@ -265,12 +267,6 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-
-
-              //  SizedBox(height: 12.0,),
-              //  Text(error,
-              //     style: TextStyle(color: Colors.red, fontSize: 14.0))
-
             ],
           ),
         ),

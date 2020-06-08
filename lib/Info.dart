@@ -7,10 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'Questions.dart';
 import 'globals.dart' as globales;
 
-
-
 class Info extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,24 +17,17 @@ class Info extends StatelessWidget {
         backgroundColor: Colors.black,
       ),
       body: Container(
-
           child: Stack(
             children: <Widget>[
               Container(padding:EdgeInsets.only(top:200.0,left: 60.0),child: SvgPicture.asset('assets/bg5.svg',height: 200.0,)),
              // background(),
               Formdetails(),
-
             ],
           ),color: Colors.blueGrey[700],
         ),
-
     );
-
   }
-
 }
-
-
 
 
 class Formdetails extends StatefulWidget {
@@ -57,7 +47,6 @@ class _FormdetailsState extends State<Formdetails> {
   }
 
   void getUser() async {
-
     try {
       final user = await _auth.currentUser();
       if (user != null) {
@@ -113,7 +102,7 @@ class _FormdetailsState extends State<Formdetails> {
                         Pattern pattern =
                             r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
                         RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(globales.name))
+                        if (!regex.hasMatch(name))
                           return 'Invalid username';
                         else
                           return null;
@@ -145,11 +134,11 @@ class _FormdetailsState extends State<Formdetails> {
                           hintStyle: TextStyle(color: Colors.black),
                           labelText: 'Enter your phoneno',
                           labelStyle: TextStyle(color: Colors.black)),
-                      validator:(phoneNO){
+                      validator:(phoneNo){
                         Pattern pattern =
                             r'^[ 0-9]+(?:[ _-][0-9]+)*$';
                         RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(globales.phoneNo))
+                        if (!regex.hasMatch(phoneNo))
                           return 'Invalid phonenumber';
                         else
                           return null;
@@ -187,7 +176,7 @@ class _FormdetailsState extends State<Formdetails> {
                         Pattern pattern =
                             r'^[ 0-9]+(?:[0-9]+)*$';
                         RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(globales.age))
+                        if (!regex.hasMatch(age))
                           return 'Invalid age';
                         else
                           return null;
@@ -224,7 +213,7 @@ class _FormdetailsState extends State<Formdetails> {
                         Pattern pattern =
                             r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
                         RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(globales.occupation))
+                        if (!regex.hasMatch(occupation))
                           return 'Invalid Occupation';
                         else
                           return null;
@@ -264,7 +253,7 @@ class _FormdetailsState extends State<Formdetails> {
                         Pattern pattern =
                             r'^[ 0-9]+(?:[ _-][0-9]+)*$';
                         RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(globales.pincode))
+                        if (!regex.hasMatch(pincode))
                           return 'Invalid Pincode';
                         else
                           return null;
@@ -302,7 +291,7 @@ class _FormdetailsState extends State<Formdetails> {
                         Pattern pattern =
                             r'^[ A-Za-z]+(?:[ _-][A-Za-z]+)*$';
                         RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(globales.sex))
+                        if (!regex.hasMatch(sex))
                           return 'Reenter your sex';
                         else
                           return null;
@@ -311,7 +300,6 @@ class _FormdetailsState extends State<Formdetails> {
                     ),
                   ),
                 ),
-
 
                 Container(
                   padding: EdgeInsets.only(left: 130.0, top: 20.0),
@@ -323,26 +311,8 @@ class _FormdetailsState extends State<Formdetails> {
                             MaterialPageRoute(
                                 builder: (context) => Questions()));
                       }
-                        double data = globales.distance;
-                      print(globales.distance);
-                        double data_meter = data * 1000;
-                        print("meterdistance:$data_meter");
-                        //String i=data_meter.toString();
-                        if (data_meter < 1.0) {
-                          //database
-                          Firestore.instance.collection('info').document(
-                              '${globales.email}')
-                              .collection('Activities')
-                              .getDocuments()
-                              .then((QuerySnapshot snapshot) {
-                            globales.red = snapshot.documents[0]['red'];
-                          });
-                          int r = int.parse(globales.red);
-                          r = r + 1;
-                          globales.red = r.toString();
-                        }
-
-                      _fs.collection('info').document('$userName').collection('Activities').document('Activity 1').setData({
+                      //database
+                      _fs.collection('info').document('$userName').collection('Activities').document('Activity 1').updateData({
                         //'email': userName,
                         'name': globales.name,
                         'phone': globales.phoneNo,
@@ -350,7 +320,6 @@ class _FormdetailsState extends State<Formdetails> {
                         'occupation': globales.occupation,
                         'pincode': globales.pincode,
                         'sex': globales.sex,
-                        'red':globales.red,
                         'count':'1',
                       });
                     },

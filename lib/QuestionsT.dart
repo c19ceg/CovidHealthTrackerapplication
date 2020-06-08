@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_recognition/speech_recognition.dart';
-import 'KnowyourselfT.dart';
+import 'DashboardT.dart';
 
 class QuestionsT extends StatelessWidget {
   @override
@@ -27,7 +28,6 @@ class QuestionsT extends StatelessWidget {
             Formdetails(),
           ],
         ),
-
     );
   }
 }
@@ -47,6 +47,11 @@ class background extends StatelessWidget {
 
 }
 
+var now = DateTime.now();
+String sdays = now.add((Duration(days: 7))).toString();
+String seventhday = sdays.substring(0,10);
+
+
 class Formdetails extends StatefulWidget {
   @override
   _FormdetailsState createState() => _FormdetailsState();
@@ -55,6 +60,7 @@ class Formdetails extends StatefulWidget {
 class _FormdetailsState extends State<Formdetails> {
   final _fs = Firestore.instance;
   final FlutterTts flutterTts = FlutterTts();
+
   SpeechRecognition _speechRecognition = SpeechRecognition();
   SpeechRecognition _speechRecognition2 = SpeechRecognition();
   SpeechRecognition _speechRecognition3 = SpeechRecognition();
@@ -102,6 +108,15 @@ class _FormdetailsState extends State<Formdetails> {
   void initState() {
     super.initState();
     getUser();
+    Future.delayed(Duration(seconds: 2),()
+    {
+      flutterTts.setLanguage("ta-IN");
+      flutterTts.setPitch(1);
+      flutterTts.setSpeechRate(1.0);
+      flutterTts.speak(
+          "இந்த பக்கத்தில், நீங்கள் ,ஆம் அல்லது இல்லை என்று பதிலளிக்க வேண்டும்.");
+    }
+    );
   }
   void getUser() async {
     try {
@@ -239,7 +254,7 @@ class _FormdetailsState extends State<Formdetails> {
                                 _speechRecognition.activate().then((result)=>
                                     setState(() => _isAvailable = result));
                                 if(_isAvailable && !_isListening)
-                                  _speechRecognition.listen(locale: "en_US").then((result) => print(":::$result"));
+                                  _speechRecognition.listen(locale: "ta_IN").then((result) => print(":::$result"));
                               },
                             ),
                             IconButton(
@@ -2072,8 +2087,9 @@ class _FormdetailsState extends State<Formdetails> {
                           qn15: ans15,
                           qn16: ans16,
                         });
+                        setdate();
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => KnowyourselfT()));
+                            MaterialPageRoute(builder: (context) => LoaderT()));
                       }
                       else {
                         Scaffold.of(context)
@@ -2083,12 +2099,17 @@ class _FormdetailsState extends State<Formdetails> {
                     }
                     },
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+  Future<void> setdate() async{
+    SharedPreferences logindata =await SharedPreferences.getInstance();
+    logindata.setString('date',seventhday);
+    print(logindata.getString('date'));
   }
 }
 

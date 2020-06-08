@@ -1,8 +1,8 @@
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 
 double distance ;
 String value;
-Position currentPosition;
+//Position currentPosition;
 String count ;
 String email;
 String name;
@@ -12,3 +12,6 @@ String occupation;
 String pincode;
 String sex;
 String red;
+String sdcount;
+int i;
+//SharedPreferences logindata =await SharedPreferences.getInstance();

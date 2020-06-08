@@ -1,17 +1,26 @@
 //import 'package:covid/login.dart';
 import 'dart:async';
-import 'dart:convert';
-//import 'dart:ffi';
-//import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+//import 'package:background_location/background_location.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:frontend1db/DashboardT.dart';
+import 'package:frontend1db/Questions.dart';
+import 'package:frontend1db/delayed_animation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+//import 'package:background_location/background_location.dart';
 import 'globals.dart'as globales;
+import 'Dashboard.dart';
+import 'DashboardT.dart';
 import 'Login.dart';
 import 'Signup.dart';
+import 'Questions.dart';
+import 'QuestionsT.dart';
+//import 'package:intl/intl.dart';
 import 'mainT.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -28,8 +37,16 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+String distance;
+String username;
+String lang;
+String date;
+bool newuser;
+String now = DateTime.now().toString();
+String todaydate = now.substring(0,10);
 
 
+//SPLASH SCREEN PAGE
 
 class Splashscreen extends StatefulWidget {
   @override
@@ -37,21 +54,133 @@ class Splashscreen extends StatefulWidget {
 }
 
 class _SplashscreenState extends State<Splashscreen> {
-
+  //String todaydate = DateFormat('yMd').format(DateTime.now());
+  int count = 0;
+  String latitude = "waiting...";
+  String longitude = "waiting...";
+  String altitude = "waiting...";
+  String accuracy = "waiting...";
+  String bearing = "waiting...";
+  String speed = "waiting...";
   @override
   void initState() {
-
+     count = 0;
     super.initState();
-    _getCurrentLocation();
-    Future.delayed(Duration(seconds: 5),(){print("hi");
-    Navigator.push(
-        context, MaterialPageRoute(
-        builder: (context) => FirstPage()
-    )
-    );
-    },
-    );
+
+
+     Future.delayed(Duration(seconds: 5),(){print("hi");
+     check_if_already_login();
+     },
+     );
   }
+
+  void check_if_already_login() async {
+    SharedPreferences logindata =await SharedPreferences.getInstance();
+    logindata = await SharedPreferences.getInstance();
+    newuser = (logindata.getBool('login') ?? true);
+    print(newuser);
+    if (newuser == true) {
+      globales.i = 1;
+      print("hiii");
+      Navigator.pushReplacement(
+          context, new MaterialPageRoute(builder: (context) => FirstPage()));
+    }
+    if (newuser == false) {
+      globales.i = 0;
+      lang = logindata.getString('lang');
+      print(logindata.getString('username'));
+      username = logindata.getString('username');
+      print(logindata.getString('date'));
+      date = logindata.getString('date');
+
+      if (lang == 'english') {
+        print("today:$todaydate");
+        print("seven:$date");
+        if (date == todaydate) {
+          Navigator.pushReplacement(
+              context,
+              new MaterialPageRoute(builder: (context) => Questions()));
+        }
+        else {
+          Navigator.pushReplacement(
+              context, new MaterialPageRoute(builder: (context) => Loader()));
+        }
+      }
+      else {
+        print("today:$todaydate");
+        print("seven:$date");
+        if (todaydate == date) {
+
+          Navigator.pushReplacement(
+              context,
+              new MaterialPageRoute(builder: (context) => QuestionsT()));
+        }
+        else {
+          Navigator.pushReplacement(
+              context, new MaterialPageRoute(builder: (context) => LoaderT()));
+        }
+      }
+    }
+  }
+
+
+  /* Future<void> initializing() async {
+    androidInitializationSettings = AndroidInitializationSettings('app_icon');
+    iosInitializationSettings = IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    initializationSettings = InitializationSettings(
+        androidInitializationSettings, iosInitializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+        initializationSettings, onSelectNotification: onSelectNotification);
+  }
+
+ void _showNotifications()async{
+    print("hi");
+    await notification();
+  }
+
+  Future<void> notification() async {
+    AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+      'Channel_ID', 'channel title', 'Channel body',
+      priority: Priority.High,
+      importance: Importance.Max,
+    );
+
+    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+    NotificationDetails notificationDetails = NotificationDetails(
+        androidNotificationDetails, iosNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Hello everyone', 'please maintain social distance',
+        notificationDetails);
+  }
+
+  Future onSelectNotification(String payload) {
+    if (payload != null) {
+      print(payload);
+    }
+    //to
+  }
+
+  Future onDidReceiveLocalNotification(int id, String title, String body,
+      String payload) async {
+    return CupertinoAlertDialog(
+      title: Text(title),
+      content: Text(body),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: () {
+            print("");
+          },
+          child: Text('okay'),)
+      ],
+    );
+  }*/
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +226,6 @@ class _SplashscreenState extends State<Splashscreen> {
                   Text("Follow Social Distancing",style: TextStyle(color: Colors.white,fontSize: 18.0,fontWeight:FontWeight.bold),)
                 ],
               ),
-
-
-
-
             ],
           )
         ],
@@ -108,30 +233,9 @@ class _SplashscreenState extends State<Splashscreen> {
 
     );
   }
-
-  _getCurrentLocation(){
-    // double lat;
-    //double long;
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-    try{
-      geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position){
-        setState((){
-          globales.currentPosition = position;
-          //print("latitude:${_currentPosition.latitude}");
-        });
-      });
-    }
-    catch(e){
-      print("Exception1:$e");
-    }
-    //lat=_currentPosition.latitude;
-    //String latitude=lat.toString();
-    //String longitude=long.toString();
-  }
-
 }
 
-
+// MAIN PAGE
 
 class FirstPage extends StatefulWidget {
   @override
@@ -139,15 +243,22 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
+  final FlutterTts flutterTts = FlutterTts();
+
+  void initState(){
+    flutterTts.setLanguage("ta-IN");
+    flutterTts.setPitch(1);
+    flutterTts.setSpeechRate(1.0);
+    flutterTts.speak("வணக்கம், நான் Covid Health Tracker. நான் உங்கள் உடல்நிலையை கண்காணித்து , சமூக விலகலை பின்பற்ற உங்களுக்கு உதவுவேன்.");
+  }
   @override
   Widget build(BuildContext context) {
-    print("hi");
     return Container(
       child: Center(
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'TRACK-O-METER',
+              'Covid Health Tracker',
               style: TextStyle(fontSize: 20.0),
             ),
             centerTitle: true,
@@ -157,270 +268,155 @@ class _FirstPageState extends State<FirstPage> {
             child: Stack(
               children: <Widget>[
                 button(),
-
-              ],),
+              ],
+            ),
           ),
         ),
-      ),);
+      ),
+
+    );
   }
 }
-
 
 class button extends StatefulWidget {
   @override
   _buttonState createState() => _buttonState();
 }
 
-class _buttonState extends State<button> {
-  //Future<Album> _futureAlbum;
-  //Position _currentPosition;
+class _buttonState extends State<button> with SingleTickerProviderStateMixin {
+  final int delayAmount = 500;
+
+  @override
+  void initState() {
+     AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: 200,
+      ),
+      lowerBound: 0.0,
+      upperBound: 0.1,
+    )
+      ..addListener(() {
+        setState(() {});
+      });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return  Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+
         children: <Widget>[
-          Text(
-            'WELCOME,User\n',
-            style: TextStyle(
-                fontSize: 40.0,
+          AvatarGlow(
+            endRadius: 90,
+            duration: Duration(seconds: 2),
+            glowColor: Colors.white,
+            repeat: true,
+            repeatPauseDuration: Duration(seconds: 2),
+            startDelay: Duration(seconds: 1),
+            child: Material(
+              elevation: 8.0,
+
+              shape: CircleBorder(),
+              child: CircleAvatar(
+                backgroundColor: Colors.grey,
+                backgroundImage: AssetImage('assets/logo.png'),
+                radius: 50.0,
+              ),
+            ),
+          ),
+          DelayedAnimation(
+            child: Text("Welcome", style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.blue[100]
-            ),
+                fontSize: 30.0,
+                color: Colors.white),),
+            delay: delayAmount + 1000,
           ),
-          Text('New user?', style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-          Text("create an account:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-
-          SizedBox(height: 10.0),
-
-          RaisedButton(
-            child: Text(
-              'Sign Up',
-              style: TextStyle(
+          DelayedAnimation(
+            child: Text("I'm Covid Health Tracker", style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30.0,
+                color: Colors.white),),
+            delay: delayAmount + 2000,
+          ),
+          SizedBox(height: 80.0,),
+          DelayedAnimation(
+            child: Text("Already have an account??", style: TextStyle(
                 fontSize: 20.0,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            onPressed: () {
-
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Signup()));
-            },
-          ),
-          SizedBox(height: 30.0),
-          Text('Existing User?', style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-          Text("login:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-
-          SizedBox(height: 10.0),
-          if(globales.currentPosition != null)
-            Text("lat: ${globales.currentPosition.latitude},lang: ${globales.currentPosition.longitude}"),
-
-          RaisedButton(
-            child: Text(
-              'Log In',
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            onPressed: () {
-              try{
-                createAlbum(globales.currentPosition.latitude,globales.currentPosition.longitude);
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-                // print("dissss:${globales.distance}");
-                try {
-                  double data = globales.distance;
-                  double data_meter = data * 1000;
-                  print("meterdistance:$data_meter");
-                  String i=data_meter.toString();
-                  if (data_meter < 1.0) {
-                    final startindex = i.indexOf('0');
-                    final finalindex = i.indexOf('.');
-                    String info = i.substring(startindex,finalindex+2);
-                    print("info:$info");
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // return object of type Dialog
-                        return AlertDialog(
-                          title: new Text("INFO"),
-                          content: Text(
-                              "distance$info,\nMove Away from your place imediately",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold, color: Colors.red,)),
-                          actions: <Widget>[
-                            // usually buttons at the bottom of the dialog
-                            new FlatButton(
-                              child: new Text("சரி"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },),
-                          ],);
-                      },);
-                  }
-                  else {
-                    final startindex = i.indexOf('1');
-                    final finalindex = i.indexOf('.');
-                    String info = i.substring(startindex,finalindex+2);
-                    print("info:$info");
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // return object of type Dialog
-                        return AlertDialog(
-                          title: new Text("INFO"),
-                          content: Text("distance:$info,", style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.green,)),
-                          actions: <Widget>[
-                            // usually buttons at the bottom of the dialog
-                            new FlatButton(
-                              child: new Text("சரி"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },),
-                          ],);
-                      },);
-                  }
-                }
-                catch(e){
-                  globales.distance =2.0;
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      // return object of type Dialog
-                      return AlertDialog(
-                        title: new Text("INFO"),
-                        content: Text("BE SAFE,", style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.green,)),
-                        actions: <Widget>[
-                          // usually buttons at the bottom of the dialog
-                          new FlatButton(
-                            child: new Text("சரி"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },),
-                        ],);
-                    },);
-                }
-              }
-              catch(e){
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    // return object of type Dialog
-                    return AlertDialog(
-                      title: new Text("INFO"),
-                      content: Text("ON YOUE DEVICE LOCATION TO AND RESTART THE APP TO PROCEED.", style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black,)),
-                      actions: <Widget>[
-                        // usually buttons at the bottom of the dialog
-                        new FlatButton(
-                          child: new Text("சரி"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },),
-                      ],);
-                  },);
-              }
-            },
-          ),
-
-          Container(
-
-            child: Column(
-              children: <Widget>[
-                SizedBox(width: 0.0,height: 20.0,),
-                Text("பயன்பாட்டு மொழியை மாற்ற:",style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.blue[100],),),
-
-                RaisedButton(
-                  child: Text("தமிழ்",style: TextStyle(fontSize: 20.0,),),
-
-                  onPressed: (){
-                    this.setState((){
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => MyAppT()));
-                    });
-                  },
+                color: Colors.white),),
+            delay: delayAmount + 3000,
+          ), SizedBox(height: 10.0,),
+          DelayedAnimation(
+            child: RaisedButton(
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
                 ),
-              ],
-            ),
-
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                }),
+            delay: delayAmount + 4000,
+          ), SizedBox(height: 20.0,),
+          DelayedAnimation(
+            child: Text("Create a new account", style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.white),),
+            delay: delayAmount + 5000,
+          ), SizedBox(height: 10.0,),
+          DelayedAnimation(
+            child: RaisedButton(
+                child: Text(
+                  'Sign up',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Signup()));
+                }),
+            delay: delayAmount + 6000,
+          ),
+          SizedBox(height: 20.0,),
+          DelayedAnimation(
+            child: Text("பயன்பாட்டு மொழியை மாற்ற:", style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.white),),
+            delay: delayAmount + 7000,
+          ), SizedBox(height: 10.0,),
+          DelayedAnimation(
+            child: RaisedButton(
+                child: Text(
+                  'தமிழ்',
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyAppT()));
+                }),
+            delay: delayAmount + 8000,
           ),
         ],
       ),
     );
   }
-
-
-  Future<Album> createAlbum(double latitude,double longitude) async{
-
-    final http.Response response = await http.post(
-      'https://ceg-covid.herokuapp.com/latlong',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String,double>{
-        'lat': latitude,
-        'long': longitude,
-      }),
-    );
-    if (response.statusCode == 200) {
-      var data = response.body;
-      var decodedData = jsonDecode(data);
-      print("data:$decodedData");//"status": "Success"
-      String postResult = decodedData['status'];
-      if (postResult == "Success") {
-        http.Response getResponse = await http.get('https://ceg-covid.herokuapp.com/getValues');
-        //print("$response.statuscode");
-        var y = getResponse.statusCode;
-        print("get statuscode:$y");
-        if (getResponse.statusCode == 200) {
-          var getData = getResponse.body;
-          //print("data:$decodedData");
-          var getDecodedData = jsonDecode(getData);
-          print("data:$getDecodedData");
-          globales.distance = getDecodedData['value'];
-          print("dis:${globales.distance}");
-        }
-      }
-    }
-
-    /*if(response.statusCode == 200){
-      var data = jsonDecode(response.body);
-     //globales.distance = data['result'];
-     globales.value = data['Result'];
-       print("distance:${globales.distance}");
-       print("value:${globales.value}");
-       //return Album.fromJson(json.decode(response.body));
-      }
-    else{
-      print(response.statusCode);
-      throw Exception('failed to load Album');
-    }*/
-
-  }
 }
-
-class Album {
-  final double longitude;
-  final double latitude;
-
-
-  Album({this.longitude, this.latitude});
-
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-
-    );
-  }
-}
-
 

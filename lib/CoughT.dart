@@ -1,12 +1,11 @@
-//import 'dart:convert';
-
 import 'package:flutter/material.dart';
+//import 'package:frontend1db/Dashboard.dart';
 //import 'package:frontend1db/auth.dart';
+import 'RecordT.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:intl/intl.dart';
-//import 'package:http/http.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'DashboardT.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class CoughT extends StatelessWidget {
   @override
@@ -17,7 +16,34 @@ class CoughT extends StatelessWidget {
   }
 }
 
-class FullScreenPage extends StatelessWidget {
+class FullScreenPage extends StatefulWidget {
+  @override
+  _FullScreenPageState createState() => _FullScreenPageState();
+}
+
+class _FullScreenPageState extends State<FullScreenPage> {
+
+  final _auth = FirebaseAuth.instance;
+  FirebaseUser fbuser;
+  String userName;
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
+
+  void getUser() async {
+
+    try {
+      final user = await _auth.currentUser();
+      if (user != null) {
+        fbuser = user;
+        userName = fbuser.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,12 +63,35 @@ class FullScreenPage extends StatelessWidget {
 //SizedBox(width: 200.0,),
             Container(padding:EdgeInsets.only(top:200.0,left: 60.0),child: SvgPicture.asset('assets/bg5.svg',height: 200.0,)),
             Details(),
-
-
           ],
         ),
-
       ),
+        bottomNavigationBar:CurvedNavigationBar(
+            color: Colors.black,
+            backgroundColor: Colors.blueGrey[700],
+            buttonBackgroundColor: Colors.black,
+            height: 70,
+            index: 2,
+            items: <Widget>[
+
+              Icon(Icons.mic,size: 20, color: Colors.white),
+              Icon(Icons.dashboard, size: 20, color: Colors.white),
+              Icon(Icons.today, size: 20, color: Colors.white),
+            ],
+            animationDuration: Duration(
+                milliseconds: 313
+            ),
+            onTap: (index){
+              if(index == 0){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => RecordT()));
+              }
+              if(index == 1){
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => DashboardT()));
+              }
+            }
+        )
     );
   }
 }
@@ -55,6 +104,7 @@ class Details extends StatelessWidget {
     return
       Column(
         children: <Widget>[
+          SizedBox(height: 70.0,),
           Center(
             child: Container(
               decoration: BoxDecoration(
@@ -72,26 +122,6 @@ class Details extends StatelessWidget {
 
                 style: TextStyle(color: Colors.red[900], fontSize: 20.0),),
             ),
-          ),
-          RaisedButton(
-            child: Text(
-              'விரிவான அறிக்கை',
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20.0),
-                bottomLeft: Radius.circular(20.0),
-                // bottomRight: Radius.circular(20.0),
-              ),
-            ),
-
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => DashboardT()));
-            },
           ),
         ],
       );
